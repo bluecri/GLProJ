@@ -90,6 +90,15 @@
     <ClCompile Include="main.cpp">
       <Filter>소스 파일\main</Filter>
     </ClCompile>
+    <ClCompile Include="src\glMain\ShaderManager.cpp">
+      <Filter>소스 파일\glMain</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\ShaderObj.cpp">
+      <Filter>헤더 파일\glMain</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\ShaderMain.cpp">
+      <Filter>헤더 파일\glMain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\glMain\Vertex.h">
@@ -152,5 +161,31 @@
     <ClInclude Include="src\Window.h">
       <Filter>소스 파일\main</Filter>
     </ClInclude>
+    <ClInclude Include="src\glMain\ShaderManager.h">
+      <Filter>헤더 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\ShaderObj.h">
+      <Filter>헤더 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\ShaderMain.h">
+      <Filter>헤더 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\ShaderShadow.h">
+      <Filter>헤더 파일\glMain</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shader\DepthRTT.fragmentshader">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="shader\DepthRTT.vertexshader">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="shader\ShadowMapping.fragmentshader">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="shader\ShadowMapping.vertexshader">
+      <Filter>리소스 파일</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -10,7 +10,7 @@
 
 int main() {
 	Window windowClass;
-	windowClass.init();
+	windowClass.init(1024, 768);
 	windowClass.mains();
 	windowClass.draws();
 	return 0;

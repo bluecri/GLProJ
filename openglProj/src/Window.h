@@ -23,6 +23,7 @@ using namespace glm;
 #include <src/game/DrawableObjectWithTexture.h>
 #include <src/game/DynamicDrawableObjectWithTexture.h>
 #include <src/glMain/Control.h>
+#include <src/glMain/ShaderManager.h>
 #include <vector>
 #include <algorithm>
 
@@ -43,6 +44,8 @@ public:
 
 	OpenglResourceManager * openglResourceManager;
 	BufferManager * bufferManager;
+	ShaderManager * shaderManager;
+	
 	Control * control;
 
 	std::vector<std::vector<std::vector<DrawableObjectWithTexture*>>> objectStorage;
@@ -74,7 +77,7 @@ public:
 	int windowWidth;
 	int windowHeight;
 
-	int init();
+	int init(int width, int height);
 	int mains();
 	int draws();
 	void makeObject(std::string objName, std::string vertexObjectName, std::string textureName, glm::vec3 modelVec, glm::vec3 angleVec, glm::vec3 scaleVec);

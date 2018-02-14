@@ -6,7 +6,9 @@
 *		 @param void void
 *		 @return void
 */
-int Window::init() {
+int Window::init(int width, int height) {
+	windowWidth = width;
+	windowHeight = height;
 
 	// Initialise GLFW
 	if (!glfwInit())
@@ -16,14 +18,12 @@ int Window::init() {
 		return -1;
 	}
 
-
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	// Open a window and create its OpenGL context
 	m_window = glfwCreateWindow(windowWidth, windowHeight, "OPENGL", NULL, NULL);
 	if (m_window == NULL) {
 		fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
@@ -33,9 +33,6 @@ int Window::init() {
 	}
 	glfwMakeContextCurrent(m_window);
 
-	// We would expect width and height to be 1024 and 768
-	int windowWidth = 1024;
-	int windowHeight = 768;
 	// But on MacOS X with a retina screen it'll be 1024*2 and 768*2, so we get the actual framebuffer size:
 	glfwGetFramebufferSize(m_window, &windowWidth, &windowHeight);
 
@@ -48,66 +45,30 @@ int Window::init() {
 		return -1;
 	}
 
-	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GL_TRUE);
-	// Hide the mouse and enable unlimited mouvement
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	// Set the mouse at the center of the screen
 	glfwPollEvents();
 	glfwSetCursorPos(m_window, windowWidth / 2, windowHeight / 2);
 
-	// Dark blue background
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
-
-	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
-
-	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
-
-	// Cull triangles which normal is not towards the camera
 	glEnable(GL_CULL_FACE);
-
-
-
-	// Create and compile our GLSL program from the shaders
-	programID = LoadShaders("shader/ShadowMapping.vertexshader", "shader/ShadowMapping.fragmentshader");
-
-	// Get a handle for our "myTextureSampler" uniform
-	TextureID = glGetUniformLocation(programID, "myTextureSampler");
-
-	// Get a handle for our "MVP" uniform
-	MatrixID = glGetUniformLocation(programID, "MVP");
-	ViewMatrixID = glGetUniformLocation(programID, "V");
-	ModelMatrixID = glGetUniformLocation(programID, "M");
-	DepthBiasID = glGetUniformLocation(programID, "DepthBiasMVP");
-	ShadowMapID = glGetUniformLocation(programID, "shadowMap");
-
-	// Get a handle for our "LightPosition" uniform
-	lightInvDirID = glGetUniformLocation(programID, "LightInvDirection_worldspace");
-
-
-
-
 
 	//camera & control
 	control = new Control();
 	control->m_window = m_window;
-	control->m_cameraAdd(glm::vec3(4.0f, 3.0f, 3.0f), 55.0f, 50.0f, 45.0f, 0.01f, 0.005f, 4.0f, 3.0f, 0.1f, 100.0f);
+	control->m_cameraAdd(glm::vec3(4.0f, 3.0f, 3.0f), 55.0f, 50.0f, 45.0f, 1.0f, 0.005f, 4.0f, 3.0f, 0.1f, 100.0f);
 	control->m_changeCameraIndex(0);
 
 
 	// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
-
-	GLuint FramebufferName = 0;
+	FramebufferName = 0;
 	glGenFramebuffers(1, &FramebufferName);
 	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
 
-
-
 	// Depth texture. Slower than a depth buffer, but you can sample it later in your shader
-	GLuint depthTexture;
 	glGenTextures(1, &depthTexture);
 	glBindTexture(GL_TEXTURE_2D, depthTexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
@@ -117,19 +78,12 @@ int Window::init() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-
-
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthTexture, 0);
-
 	// No color output in the bound framebuffer, only depth.
 	glDrawBuffer(GL_NONE);
-
 	// Always check that our framebuffer is ok
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		return false;
-
-	//glBindVertexArray(VertexArrayID);
-
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	return 0;
@@ -144,6 +98,7 @@ int Window::init() {
 int Window::mains() {
 	openglResourceManager = new OpenglResourceManager();
 	bufferManager = new BufferManager();
+	shaderManager = new ShaderManager();	//load shader in this func.
 
 	//load vertex, texture files
 	//openglResourceManager->addVertexVec("smallShip", "SpaceShip.obj");
@@ -188,58 +143,38 @@ int Window::mains() {
 */
 int Window::draws() {
 	vector<GLuint> &vertexArrayVec = bufferManager->vertexArrayObjectIDVec;
+	ShaderObj* shaderMainPtr = shaderManager->getShaderPtrWithEnum(ShaderManager::ENUM_SHADER_IDX::MAIN);
+	ShaderObj* shaderShadowPtr = shaderManager->getShaderPtrWithEnum(ShaderManager::ENUM_SHADER_IDX::SHADOW);
+
+	//main loop
 	do {
-		control->m_controlProgress();
-		//glBindVertexArray(VertexArrayID2);
+		control->m_controlProgress();	//control
+
 		// Render to our framebuffer
 		glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
 		glViewport(0, 0, 1024, 1024); // Render on the whole framebuffer, complete from the lower left corner to the upper right
-
-									  // We don't use bias in the shader, but instead we draw back faces, 
-									  // which are already separated from the front faces by a small distance 
-									  // (if your geometry is made this way)
 		glEnable(GL_CULL_FACE);
 		glDisable(GL_CULL_FACE);
-		glCullFace(GL_FRONT); // Cull back-facing triangles -> draw only front-facing triangles
-
-							  // Clear the screen
+		glCullFace(GL_FRONT);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Use our shader
-		glUseProgram(depthProgramID);
+		glUseProgram(shaderShadowPtr->m_shaderID);
 
 		glm::vec3 lightInvDir = glm::vec3(4, 6, 6);
-
-		// Compute the MVP matrix from the light's point of view
-		//glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
 		glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-
 		glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-		//glm::mat4 depthModelMatrixNEW = glm::translate(glm::mat4(), lightInvDir);
 		glm::mat4 depthModelMatrixNEW = glm::mat4(1.0);
-		// or, for spot light :
-		//glm::vec3 lightPos(5, 20, 20);
-		//glm::mat4 depthProjectionMatrix = glm::perspective<float>(45.0f, 1.0f, 2.0f, 50.0f);
-		//glm::mat4 depthViewMatrix = glm::lookAt(lightPos, lightPos-lightInvDir, glm::vec3(0,1,0));
-
-		//glm::mat4 depthModelMatrix = glm::mat4(1.0);
-		//glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-
-
 
 		for (size_t i = 0; i < objectStorage.size(); i++) {
 			for (size_t k = 0; k < objectStorage[i].size(); k++) {
 				glBindVertexArray(bufferManager->vertexArrayObjectIDVec[k]);
 
 				for (size_t idx = 0; idx < objectStorage[i][k].size(); idx++) {
-					//glm::mat4 depthModelMatrix = glm::mat4(1.0);
 					glm::mat4 depthModelMatrix = objectStorage[i][k][idx]->getRetMatrix();
-					//glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-
-					//glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrixNEW * depthModelMatrix;
 					glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrixNEW * depthModelMatrix;
-					glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &depthMVP[0][0]);
-
+					
+					glUniformMatrix4fv(shaderShadowPtr->depthMatrixID, 1, GL_FALSE, &depthMVP[0][0]);
 					glDrawElements(
 						GL_TRIANGLES,      // mode
 						openglResourceManager->getBLVWTWithIndex(k)->getIndiceVecNum(),    // count
@@ -249,78 +184,37 @@ int Window::draws() {
 				}
 				glBindVertexArray(0);
 			}
-
 		}
-
 		glBindVertexArray(0);
-
-
-
 
 
 		// Render to the screen
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, windowWidth, windowHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
-
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK); // Cull back-facing triangles -> draw only front-facing triangles
-
-							 // Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// Use our shader
-		glUseProgram(programID);
-
-		// Compute the MVP matrix from keyboard and mouse input
+		glUseProgram(shaderMainPtr->m_shaderID);
 
 		glm::mat4 ProjectionMatrix = control->m_getCurCameraProjectionMatrix();
 		glm::mat4 ViewMatrix = control->m_getCurCameraViewMatrix();	//look at
-		//ViewMatrix = glm::lookAt(glm::vec3(14,6,4), glm::vec3(0,1,0), glm::vec3(0,1,0));
-		//glm::mat4 ModelMatrix = glm::mat4(1.0);
-		//glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-
 		glm::mat4 biasMatrix(
 			0.5, 0.0, 0.0, 0.0,
 			0.0, 0.5, 0.0, 0.0,
 			0.0, 0.0, 0.5, 0.0,
 			0.5, 0.5, 0.5, 1.0
 			);
-
-		//glm::mat4 depthBiasMVP = biasMatrix * depthMVP;
-		//glm::mat4 depthBiasMVP = biasMatrix * depthProjectionMatrix * depthViewMatrix * glm::mat4(1.0f);
 		glm::mat4 depthBiasMVP = biasMatrix * depthProjectionMatrix * depthViewMatrix * depthModelMatrixNEW;
 
-		// Send our transformation to the currently bound shader, 
-		// in the "MVP" uniform
-		//glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-		//glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
-		glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
-		glUniformMatrix4fv(DepthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
+		glUniformMatrix4fv(shaderMainPtr->m_cameraViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
+		glUniformMatrix4fv(shaderMainPtr->m_depthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
+		glUniform3f(shaderMainPtr->m_lightInvDirID, lightInvDir.x, lightInvDir.y, lightInvDir.z);
 
-		glUniform3f(lightInvDirID, lightInvDir.x, lightInvDir.y, lightInvDir.z);
-
-
-		// Bind our texture in Texture Unit 0
 		glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, Texture);
-		// Set our "myTextureSampler" sampler to use Texture Unit 0
-		//glUniform1i(TextureID, 0);
-
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, depthTexture);
-		glUniform1i(ShadowMapID, 1);
-		/*
-		glBindVertexArray(VertexArrayID2);
-		// Draw the triangles !
-
-		glDrawElements(
-		GL_TRIANGLES,      // mode
-		indices.size(),    // count
-		GL_UNSIGNED_SHORT, // type
-		(void*)0           // element array buffer offset
-		);
-		glBindVertexArray(0);
-		*/
+		glUniform1i(shaderMainPtr->m_shadowMapID, 1);
+		
 		for (size_t i = 0; i < objectStorage.size(); i++) {
 			for (size_t k = 0; k < objectStorage[i].size(); k++) {
 				glBindVertexArray(bufferManager->vertexArrayObjectIDVec[k]);
@@ -328,8 +222,8 @@ int Window::draws() {
 				for (size_t idx = 0; idx < objectStorage[i][k].size(); idx++) {
 					glm::mat4 Model = objectStorage[i][k][idx]->getRetMatrix();
 					glm::mat4 mvp = ProjectionMatrix * ViewMatrix  * Model;
-					glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &Model[0][0]);
-					glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
+					glUniformMatrix4fv(shaderMainPtr->m_modelMatrixID, 1, GL_FALSE, &Model[0][0]);
+					glUniformMatrix4fv(shaderMainPtr->m_MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
 					glDrawElements(
 						GL_TRIANGLES,      // mode
 						openglResourceManager->getBLVWTWithIndex(k)->getIndiceVecNum(),    // count
@@ -339,10 +233,7 @@ int Window::draws() {
 				}
 				glBindVertexArray(0);
 			}
-
 		}
-
-
 
 		// Swap buffers
 		glfwSwapBuffers(m_window);
@@ -374,10 +265,7 @@ void Window::makeObject(std::string objName, std::string vertexObjectName, std::
 	int objectIndex = openglResourceManager->getBLVWTIndexWithName(vertexObjectName);
 
 	DynamicDrawableObjectWithTexture* newGameObj = new DynamicDrawableObjectWithTexture(objName, objectStorage[textureIndex][objectIndex].size(), textureIndex, objectIndex, modelVec, angleVec, scaleVec, false);
-
-	//m_IDToDrawingObjectMap.insert(std::make_pair(newGameObj->iObjID, newGameObj));
 	m_NameToDrawingObjectMap.insert(std::make_pair(objName, newGameObj));
-
 	objectStorage[textureIndex][objectIndex].push_back(newGameObj);
 }
 /**
