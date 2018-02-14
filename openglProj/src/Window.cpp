@@ -99,6 +99,7 @@ int Window::mains() {
 	openglResourceManager = new OpenglResourceManager();
 	bufferManager = new BufferManager();
 	shaderManager = new ShaderManager();	//load shader in this func.
+	textManager = new TextManager();
 
 	//load vertex, texture files
 	//openglResourceManager->addVertexVec("smallShip", "SpaceShip.obj");
@@ -108,7 +109,7 @@ int Window::mains() {
 	openglResourceManager->addVertexVec("room", "obj/room_thickwalls.obj");
 	//openglResourceManager->addVertexVec("monkeyVertex", "suzanne.obj");
 	openglResourceManager->addTextureVec("uvMapTexture", "texture/uvmap.DDS");
-
+	
 	//make object storage for print : [textureNum][vertexNum][]
 	objectStorage =
 		std::vector<std::vector<std::vector<DrawableObjectWithTexture*>>>(openglResourceManager->getBLTLen(),
@@ -123,7 +124,8 @@ int Window::mains() {
 
 	//register to buffer
 	bufferManager->initBuffer(openglResourceManager);
-
+	//textManager->textManagerInit();	//BUG
+	
 	makeObject("firstObjec2", "room", "uvMapTexture", glm::vec3(0, 0, 2), glm::vec3(), glm::vec3(1, 1, 1));
 	makeObject("firstObject3", "room", "uvMapTexture", glm::vec3(), glm::vec3(), glm::vec3(1, 1, 1));
 
@@ -145,6 +147,7 @@ int Window::draws() {
 	vector<GLuint> &vertexArrayVec = bufferManager->vertexArrayObjectIDVec;
 	ShaderObj* shaderMainPtr = shaderManager->getShaderPtrWithEnum(ShaderManager::ENUM_SHADER_IDX::MAIN);
 	ShaderObj* shaderShadowPtr = shaderManager->getShaderPtrWithEnum(ShaderManager::ENUM_SHADER_IDX::SHADOW);
+	//ShaderObj* shaderTextPtr = shaderManager->getShaderPtrWithEnum(ShaderManager::ENUM_SHADER_IDX::TEXT);
 
 	//main loop
 	do {
@@ -234,6 +237,8 @@ int Window::draws() {
 				glBindVertexArray(0);
 			}
 		}
+
+		//textManager->printText2DWithIndex(0, "adf", 120, 120, 40);	//BUG
 
 		// Swap buffers
 		glfwSwapBuffers(m_window);

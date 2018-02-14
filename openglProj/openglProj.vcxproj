@@ -46,7 +46,10 @@
     <ClCompile Include="common\quaternion_utils.cpp" />
     <ClCompile Include="common\shader.cpp" />
     <ClCompile Include="common\tangentspace.cpp" />
-    <ClCompile Include="common\text2D.cpp" />
+    <ClCompile Include="common\text2D.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DesktopDebug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DesktopRelease|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\game\CameraObject.cpp" />
     <ClCompile Include="src\game\DrawableObjectWithTexture.cpp" />
@@ -59,6 +62,8 @@
     <ClCompile Include="src\glMain\ShaderMain.cpp" />
     <ClCompile Include="src\glMain\ShaderManager.cpp" />
     <ClCompile Include="src\glMain\ShaderObj.cpp" />
+    <ClCompile Include="src\glMain\ShaderText.cpp" />
+    <ClCompile Include="src\glMain\Text2DObj.cpp" />
     <ClCompile Include="src\glMain\texture.cpp" />
     <ClCompile Include="src\glMain\vboindexer.cpp" />
     <ClCompile Include="src\glMain\Vertex.cpp" />
@@ -69,7 +74,10 @@
     <ClInclude Include="common\quaternion_utils.hpp" />
     <ClInclude Include="common\shader.hpp" />
     <ClInclude Include="common\tangentspace.hpp" />
-    <ClInclude Include="common\text2D.hpp" />
+    <ClInclude Include="common\text2D.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DesktopDebug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DesktopRelease|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="src\game\CameraObject.h" />
     <ClInclude Include="src\game\DrawableObject.h" />
     <ClInclude Include="src\game\DrawableObjectWithTexture.h" />
@@ -86,6 +94,9 @@
     <ClInclude Include="src\glMain\ShaderManager.h" />
     <ClInclude Include="src\glMain\ShaderObj.h" />
     <ClInclude Include="src\glMain\ShaderShadow.h" />
+    <ClInclude Include="src\glMain\ShaderText.h" />
+    <ClInclude Include="src\glMain\TextManager.h" />
+    <ClInclude Include="src\glMain\Text2DObj.h" />
     <ClInclude Include="src\glMain\texture.h" />
     <ClInclude Include="src\glMain\vboindexer.h" />
     <ClInclude Include="src\glMain\Vertex.h" />
@@ -96,6 +107,8 @@
     <None Include="shader\DepthRTT.vertexshader" />
     <None Include="shader\ShadowMapping.fragmentshader" />
     <None Include="shader\ShadowMapping.vertexshader" />
+    <None Include="shader\TextVertexShader.fragmentshader" />
+    <None Include="shader\TextVertexShader.vertexshader" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E1457B04-B999-4C01-8B51-38A4892B9503}</ProjectGuid>
