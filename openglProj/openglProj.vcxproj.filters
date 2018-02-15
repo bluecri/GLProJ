@@ -105,6 +105,9 @@
     <ClCompile Include="src\glMain\Text2DObj.cpp">
       <Filter>소스 파일\glMain</Filter>
     </ClCompile>
+    <ClCompile Include="src\glMain\SkyboxObj.cpp">
+      <Filter>소스 파일\glMain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\glMain\Vertex.h">
@@ -182,11 +185,17 @@
     <ClInclude Include="src\glMain\ShaderText.h">
       <Filter>헤더 파일\glMain</Filter>
     </ClInclude>
-    <ClInclude Include="src\glMain\TextManager.h">
-      <Filter>소스 파일\glMain</Filter>
-    </ClInclude>
     <ClInclude Include="src\glMain\Text2DObj.h">
       <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\SkyboxObj.h">
+      <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\TextManager.h">
+      <Filter>헤더 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\SkyboxManager.h">
+      <Filter>헤더 파일\glMain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -63,6 +63,7 @@
     <ClCompile Include="src\glMain\ShaderManager.cpp" />
     <ClCompile Include="src\glMain\ShaderObj.cpp" />
     <ClCompile Include="src\glMain\ShaderText.cpp" />
+    <ClCompile Include="src\glMain\SkyboxObj.cpp" />
     <ClCompile Include="src\glMain\Text2DObj.cpp" />
     <ClCompile Include="src\glMain\texture.cpp" />
     <ClCompile Include="src\glMain\vboindexer.cpp" />
@@ -95,6 +96,8 @@
     <ClInclude Include="src\glMain\ShaderObj.h" />
     <ClInclude Include="src\glMain\ShaderShadow.h" />
     <ClInclude Include="src\glMain\ShaderText.h" />
+    <ClInclude Include="src\glMain\SkyboxManager.h" />
+    <ClInclude Include="src\glMain\SkyboxObj.h" />
     <ClInclude Include="src\glMain\TextManager.h" />
     <ClInclude Include="src\glMain\Text2DObj.h" />
     <ClInclude Include="src\glMain\texture.h" />
