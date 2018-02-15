@@ -15,6 +15,7 @@ class ShaderObj {
 		GLuint m_depthBiasID;
 		GLuint m_shadowMapID;
 		GLuint m_lightInvDirID;
+		GLuint m_textureID;
 
 		GLuint depthMatrixID;
 
@@ -29,6 +30,7 @@ class ShaderObj {
 			m_depthBiasID = -1;
 			m_shadowMapID = -1;
 			m_lightInvDirID = -1;
+			m_textureID = -1;
 
 			depthMatrixID = -1;
 

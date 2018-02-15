@@ -82,10 +82,10 @@ public:
 		std::vector<glm::vec2> UVs;
 		for (unsigned int i = 0; i<length; i++) {
 
-			glm::vec2 vertex_up_left = glm::vec2(x + i * size, y + size);
-			glm::vec2 vertex_up_right = glm::vec2(x + i * size + size, y + size);
-			glm::vec2 vertex_down_right = glm::vec2(x + i * size + size, y);
-			glm::vec2 vertex_down_left = glm::vec2(x + i * size, y);
+			glm::vec2 vertex_up_left = glm::vec2(x + i * size/2, y + size);
+			glm::vec2 vertex_up_right = glm::vec2(x + i * size/2 + size, y + size);
+			glm::vec2 vertex_down_right = glm::vec2(x + i * size/2 + size, y);
+			glm::vec2 vertex_down_left = glm::vec2(x + i * size/2, y);
 
 			vertices.push_back(vertex_up_left);
 			vertices.push_back(vertex_down_left);
@@ -127,11 +127,12 @@ public:
 		glUniform1i(text2DObjPtrVec[index]->Text2DUniformID, 4);
 
 		// Draw call
+		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 		glDisable(GL_BLEND);
-
+		glEnable(GL_DEPTH_TEST);
 		glBindVertexArray(0);
 	}
 

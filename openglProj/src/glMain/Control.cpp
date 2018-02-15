@@ -43,7 +43,7 @@ void Control::m_modifyCurCameraWithInput() {
 
 void Control::m_calcDeltaTime() {
 	m_deltaTime = glfwGetTime() - s_curTime;
-	s_curTime = m_deltaTime;
+	s_curTime = glfwGetTime();
 	//frame check
 	float timeInterval = glfwGetTime() - s_curTimeForFrame;
 	m_p_innerFps += 1;

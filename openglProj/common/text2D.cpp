@@ -44,11 +44,18 @@ void printText2D(const char * text, int x, int y, int size){
 	std::vector<glm::vec2> UVs;
 	for ( unsigned int i=0 ; i<length ; i++ ){
 		
-		glm::vec2 vertex_up_left    = glm::vec2( x+i*size     , y+size );
-		glm::vec2 vertex_up_right   = glm::vec2( x+i*size+size, y+size );
-		glm::vec2 vertex_down_right = glm::vec2( x+i*size+size, y      );
-		glm::vec2 vertex_down_left  = glm::vec2( x+i*size     , y      );
+		glm::vec2 vertex_up_left    = glm::vec2( x+i*(0)     , y+size );
+		glm::vec2 vertex_up_right   = glm::vec2( x+i*(0)+size, y+size );
+		glm::vec2 vertex_down_right = glm::vec2( x+i*(0)+size, y      );
+		glm::vec2 vertex_down_left  = glm::vec2( x+i*0  , y      );
+		
+		/*
+		glm::vec2 vertex_up_left = glm::vec2(x + i*(size), y + size);
+		glm::vec2 vertex_up_right = glm::vec2(x + i*(size) + size, y + size);
+		glm::vec2 vertex_down_right = glm::vec2(x + i*(size) + size, y);
+		glm::vec2 vertex_down_left = glm::vec2(x + i*(size), y);
 
+		*/
 		vertices.push_back(vertex_up_left   );
 		vertices.push_back(vertex_down_left );
 		vertices.push_back(vertex_up_right  );
@@ -93,9 +100,9 @@ void printText2D(const char * text, int x, int y, int size){
 
 	// Bind shader
 	glUseProgram(Text2DShaderID);
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, Text2DTextureID);
-	glUniform1i(Text2DUniformID, 0);
+	glUniform1i(Text2DUniformID, 2);
 
 	// Draw call
 	glEnable(GL_BLEND);

@@ -12,6 +12,7 @@ class ShaderMain : public ShaderObj{
 				m_depthBiasID = glGetUniformLocation(m_shaderID, "DepthBiasMVP");
 				m_shadowMapID = glGetUniformLocation(m_shaderID, "shadowMap");
 				m_lightInvDirID = glGetUniformLocation(m_shaderID, "LightInvDirection_worldspace");
+				m_textureID = glGetUniformLocation(m_shaderID, "myTextureSampler");
 			}
 		}
 };
