@@ -25,6 +25,7 @@ public:
 	GLuint m_staticVertexBufferID;		///< static buffer
 	GLuint m_dynamicVertexBufferID;		///< dynamic buffer
 	GLuint m_elementBufferID;			///< element buffer
+	
 	//GLuint staticVertexID;
 
 	OpenglResourceManager* m_openglResourceManagerPtr;	

@@ -24,6 +24,7 @@ using namespace glm;
 #include <src/game/DynamicDrawableObjectWithTexture.h>
 #include <src/glMain/Control.h>
 #include <src/glMain/ShaderManager.h>
+#include <src/glMain/TextManager.h>
 #include <vector>
 #include <algorithm>
 
@@ -45,6 +46,7 @@ public:
 	OpenglResourceManager * openglResourceManager;
 	BufferManager * bufferManager;
 	ShaderManager * shaderManager;
+	TextManager * textManager;
 	
 	Control * control;
 

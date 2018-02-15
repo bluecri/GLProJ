@@ -99,6 +99,15 @@
     <ClCompile Include="src\glMain\ShaderMain.cpp">
       <Filter>헤더 파일\glMain</Filter>
     </ClCompile>
+    <ClCompile Include="src\glMain\ShaderText.cpp">
+      <Filter>헤더 파일\glMain</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\Text2DObj.cpp">
+      <Filter>소스 파일\glMain</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\SkyboxObj.cpp">
+      <Filter>소스 파일\glMain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\glMain\Vertex.h">
@@ -173,6 +182,21 @@
     <ClInclude Include="src\glMain\ShaderShadow.h">
       <Filter>헤더 파일\glMain</Filter>
     </ClInclude>
+    <ClInclude Include="src\glMain\ShaderText.h">
+      <Filter>헤더 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\Text2DObj.h">
+      <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\SkyboxObj.h">
+      <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\TextManager.h">
+      <Filter>헤더 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\SkyboxManager.h">
+      <Filter>헤더 파일\glMain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\DepthRTT.fragmentshader">
@@ -185,6 +209,12 @@
       <Filter>리소스 파일</Filter>
     </None>
     <None Include="shader\ShadowMapping.vertexshader">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="shader\TextVertexShader.fragmentshader">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="shader\TextVertexShader.vertexshader">
       <Filter>리소스 파일</Filter>
     </None>
   </ItemGroup>

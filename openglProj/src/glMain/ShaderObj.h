@@ -15,8 +15,11 @@ class ShaderObj {
 		GLuint m_depthBiasID;
 		GLuint m_shadowMapID;
 		GLuint m_lightInvDirID;
+		GLuint m_textureID;
 
 		GLuint depthMatrixID;
+
+		GLuint m_text2DUniformID;
 		
 		ShaderObj(const char * vertexShader, const char * fragmentShader) {
 			m_shaderID = LoadShaders(vertexShader, fragmentShader);
@@ -27,8 +30,11 @@ class ShaderObj {
 			m_depthBiasID = -1;
 			m_shadowMapID = -1;
 			m_lightInvDirID = -1;
+			m_textureID = -1;
 
 			depthMatrixID = -1;
+
+			m_text2DUniformID = -1;
 		}
 
 		GLuint getShaderID() {

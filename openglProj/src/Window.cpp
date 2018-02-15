@@ -99,6 +99,7 @@ int Window::mains() {
 	openglResourceManager = new OpenglResourceManager();
 	bufferManager = new BufferManager();
 	shaderManager = new ShaderManager();	//load shader in this func.
+	textManager = new TextManager();
 
 	//load vertex, texture files
 	//openglResourceManager->addVertexVec("smallShip", "SpaceShip.obj");
@@ -108,7 +109,7 @@ int Window::mains() {
 	openglResourceManager->addVertexVec("room", "obj/room_thickwalls.obj");
 	//openglResourceManager->addVertexVec("monkeyVertex", "suzanne.obj");
 	openglResourceManager->addTextureVec("uvMapTexture", "texture/uvmap.DDS");
-
+	
 	//make object storage for print : [textureNum][vertexNum][]
 	objectStorage =
 		std::vector<std::vector<std::vector<DrawableObjectWithTexture*>>>(openglResourceManager->getBLTLen(),
@@ -123,7 +124,8 @@ int Window::mains() {
 
 	//register to buffer
 	bufferManager->initBuffer(openglResourceManager);
-
+	textManager->textManagerInit();
+	
 	makeObject("firstObjec2", "room", "uvMapTexture", glm::vec3(0, 0, 2), glm::vec3(), glm::vec3(1, 1, 1));
 	makeObject("firstObject3", "room", "uvMapTexture", glm::vec3(), glm::vec3(), glm::vec3(1, 1, 1));
 
@@ -145,6 +147,7 @@ int Window::draws() {
 	vector<GLuint> &vertexArrayVec = bufferManager->vertexArrayObjectIDVec;
 	ShaderObj* shaderMainPtr = shaderManager->getShaderPtrWithEnum(ShaderManager::ENUM_SHADER_IDX::MAIN);
 	ShaderObj* shaderShadowPtr = shaderManager->getShaderPtrWithEnum(ShaderManager::ENUM_SHADER_IDX::SHADOW);
+	//ShaderObj* shaderTextPtr = shaderManager->getShaderPtrWithEnum(ShaderManager::ENUM_SHADER_IDX::TEXT);
 
 	//main loop
 	do {
@@ -210,12 +213,15 @@ int Window::draws() {
 		glUniformMatrix4fv(shaderMainPtr->m_depthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
 		glUniform3f(shaderMainPtr->m_lightInvDirID, lightInvDir.x, lightInvDir.y, lightInvDir.z);
 
-		glActiveTexture(GL_TEXTURE0);
+		// should active texture # and bind(->texture #)
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, depthTexture);
 		glUniform1i(shaderMainPtr->m_shadowMapID, 1);
-		
+
 		for (size_t i = 0; i < objectStorage.size(); i++) {
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, openglResourceManager->getBLTWithIndex(i)->m_p_TextureID);
+			glUniform1i(shaderMainPtr->m_textureID, 0);
 			for (size_t k = 0; k < objectStorage[i].size(); k++) {
 				glBindVertexArray(bufferManager->vertexArrayObjectIDVec[k]);
 
@@ -234,6 +240,10 @@ int Window::draws() {
 				glBindVertexArray(0);
 			}
 		}
+
+		//textManager->printText2DWithIndex(0, "adf", 160, 120, 40);
+		//textManager->printText2DWithIndex(0, "abcdefghijklmnopqrstuvwxyz", 120, 120, 40);
+		//textManager->printText2DWithIndex(0, "ABCDEFGHIJKLMNOPQUSTUVWXYZ", 120, 170, 40);
 
 		// Swap buffers
 		glfwSwapBuffers(m_window);

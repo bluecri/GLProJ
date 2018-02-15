@@ -8,17 +8,20 @@
 #include <src/glMain/ShaderObj.h>
 #include <src/glMain/ShaderMain.h>
 #include <src/glMain/ShaderShadow.h>
+#include <src/glMain/ShaderText.h>
+
 
 class ShaderManager{
 public:
 	std::vector<ShaderObj*> m_shaderStorage;
 	enum ENUM_SHADER_IDX
 	{
-		MAIN = 0, SHADOW = 1
+		MAIN = 0, SHADOW = 1//, TEXT = 2
 	};
 	ShaderManager() {
 		m_addMainShader("shader/ShadowMapping.vertexshader", "shader/ShadowMapping.fragmentshader");
 		m_addShadowShader("shader/DepthRTT.vertexshader", "shader/DepthRTT.fragmentshader");
+		//m_addTextShader("shader/TextVertexShader.vertexshader", "shader/TextVertexShader.fragmentshader");
 	}
 	
 	int m_addMainShader(const char * vertexShader, const char * fragmentShader) {
@@ -42,6 +45,18 @@ public:
 			return -1;
 		}
 	}
+	/*
+	int m_addTextShader(const char * vertexShader, const char * fragmentShader) {
+		ShaderText* tempShaderText = new ShaderText(vertexShader, fragmentShader);
+		if (tempShaderText->m_shaderID != -1) {
+			m_shaderStorage.push_back(tempShaderText);
+			return tempShaderText->m_shaderID;
+		}
+		else {
+			return -1;
+		}
+	}
+	*/
 
 	ShaderObj* getShaderPtrWithEnum(ENUM_SHADER_IDX enum_idx) {
 		return m_shaderStorage[enum_idx];

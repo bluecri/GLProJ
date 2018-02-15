@@ -36,8 +36,6 @@ void BufferManager::initBuffer(OpenglResourceManager* openglResourceManagerPtr) 
 		elementOffset.push_back(elementOffset[i] + vertexVecSize);
 	}
 
-
-
 	//setting vertex (vertexArrayObjectIDVec)
 	for (int i = 0; i < m_openglResourceManagerPtr->getBLVWTLen(); i++) {
 		GLuint tempVertexID;
@@ -60,6 +58,10 @@ void BufferManager::initBuffer(OpenglResourceManager* openglResourceManagerPtr) 
 		glBindVertexArray(0);	//unbind!
 	}
 
+
+	
+
+	
 }
 
 BufferManager::~BufferManager() {
