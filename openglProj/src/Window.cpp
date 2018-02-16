@@ -192,6 +192,18 @@ int Window::draws() {
 		}
 		glBindVertexArray(0);
 
+		//draw skybox
+		glm::mat4 ProjectionMatrix = control->m_getCurCameraProjectionMatrix();
+		glm::mat4 ViewMatrix = control->m_getCurCameraViewMatrix();	//look at
+		glm::mat4 ModelMatrixSkybox = glm::mat4(1.0f);
+		glm::mat4 tempMVP = ProjectionMatrix * ViewMatrix * ModelMatrixSkybox;
+
+		
+		skyboxManager->setUniformModelMatrix(ModelMatrixSkybox);
+		skyboxManager->setUniformViewMatrix(ViewMatrix);
+		skyboxManager->setUniformMVPMatrix(tempMVP);
+		skyboxManager->drawSkyBox();
+
 
 		// Render to the screen
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -201,8 +213,7 @@ int Window::draws() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(shaderMainPtr->m_shaderID);
 
-		glm::mat4 ProjectionMatrix = control->m_getCurCameraProjectionMatrix();
-		glm::mat4 ViewMatrix = control->m_getCurCameraViewMatrix();	//look at
+		
 		glm::mat4 biasMatrix(
 			0.5, 0.0, 0.0, 0.0,
 			0.0, 0.5, 0.0, 0.0,

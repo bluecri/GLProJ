@@ -95,6 +95,7 @@
     <ClInclude Include="src\glMain\ShaderManager.h" />
     <ClInclude Include="src\glMain\ShaderObj.h" />
     <ClInclude Include="src\glMain\ShaderShadow.h" />
+    <ClInclude Include="src\glMain\ShaderSkybox.h" />
     <ClInclude Include="src\glMain\ShaderText.h" />
     <ClInclude Include="src\glMain\SkyboxManager.h" />
     <ClInclude Include="src\glMain\SkyboxObj.h" />
@@ -110,6 +111,8 @@
     <None Include="shader\DepthRTT.vertexshader" />
     <None Include="shader\ShadowMapping.fragmentshader" />
     <None Include="shader\ShadowMapping.vertexshader" />
+    <None Include="shader\SkyboxMapping.fragmentshader" />
+    <None Include="shader\SkyboxMapping.vertexshader" />
     <None Include="shader\TextVertexShader.fragmentshader" />
     <None Include="shader\TextVertexShader.vertexshader" />
   </ItemGroup>
