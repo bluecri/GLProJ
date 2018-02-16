@@ -25,6 +25,7 @@ using namespace glm;
 #include <src/glMain/Control.h>
 #include <src/glMain/ShaderManager.h>
 #include <src/glMain/TextManager.h>
+#include <src/glMain/SkyboxManager.h>
 #include <vector>
 #include <algorithm>
 
@@ -47,6 +48,7 @@ public:
 	BufferManager * bufferManager;
 	ShaderManager * shaderManager;
 	TextManager * textManager;
+	SkyboxObjManager * skyboxManager;
 	
 	Control * control;
 

@@ -100,6 +100,7 @@ int Window::mains() {
 	bufferManager = new BufferManager();
 	shaderManager = new ShaderManager();	//load shader in this func.
 	textManager = new TextManager();
+	skyboxManager = new SkyboxObjManager();
 
 	//load vertex, texture files
 	//openglResourceManager->addVertexVec("smallShip", "SpaceShip.obj");
@@ -125,6 +126,7 @@ int Window::mains() {
 	//register to buffer
 	bufferManager->initBuffer(openglResourceManager);
 	textManager->textManagerInit();
+	skyboxManager->bufferInit();
 	
 	makeObject("firstObjec2", "room", "uvMapTexture", glm::vec3(0, 0, 2), glm::vec3(), glm::vec3(1, 1, 1));
 	makeObject("firstObject3", "room", "uvMapTexture", glm::vec3(), glm::vec3(), glm::vec3(1, 1, 1));
