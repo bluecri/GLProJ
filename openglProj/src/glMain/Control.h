@@ -59,7 +59,7 @@ public:
 	void m_cameraAdd(glm::vec3 modelVec, float horizontalAngle, float verticalAngle, float fov, float speed, float mouseSpeed,
 		float horizontalFovValue = 4.0f, float verticalFovValue = 3.0f, float frontFrustrumValue = 0.1f, float backFrustrumValue = 100.0f) {
 		m_cameraObjectVec.push_back(new CameraObject(modelVec, horizontalAngle, verticalAngle, fov, speed, mouseSpeed,
-			horizontalFovValue = 4.0f, verticalFovValue = 3.0f, frontFrustrumValue = 0.1f, backFrustrumValue = 100.0f));
+			horizontalFovValue, verticalFovValue, frontFrustrumValue, backFrustrumValue));
 	}
 
 	void m_changeCameraIndex(int idx);

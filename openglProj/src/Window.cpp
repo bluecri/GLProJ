@@ -51,7 +51,7 @@ int Window::init(int width, int height) {
 	glfwPollEvents();
 	glfwSetCursorPos(m_window, windowWidth / 2, windowHeight / 2);
 
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.7f, 0.0f);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_CULL_FACE);
@@ -59,7 +59,7 @@ int Window::init(int width, int height) {
 	//camera & control
 	control = new Control();
 	control->m_window = m_window;
-	control->m_cameraAdd(glm::vec3(4.0f, 3.0f, 3.0f), 55.0f, 50.0f, 45.0f, 1.0f, 0.005f, 4.0f, 3.0f, 0.1f, 100.0f);
+	control->m_cameraAdd(glm::vec3(4.0f, 3.0f, 3.0f), 55.0f, 50.0f, 45.0f, 3.0f, 0.005f, 4.0f, 3.0f, 0.1f, 140.0f);
 	control->m_changeCameraIndex(0);
 
 
@@ -166,7 +166,7 @@ int Window::draws() {
 		// Use our shader
 		glUseProgram(shaderShadowPtr->m_shaderID);
 
-		glm::vec3 lightInvDir = glm::vec3(4, 6, 6);
+		glm::vec3 lightInvDir = glm::vec3(-4, 6, 6);
 		glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
 		glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 		glm::mat4 depthModelMatrixNEW = glm::mat4(1.0);
@@ -192,25 +192,35 @@ int Window::draws() {
 		}
 		glBindVertexArray(0);
 
+
+
+
+		// Render to the screen
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glViewport(0, 0, windowWidth, windowHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
+
 		//draw skybox
 		glm::mat4 ProjectionMatrix = control->m_getCurCameraProjectionMatrix();
 		glm::mat4 ViewMatrix = control->m_getCurCameraViewMatrix();	//look at
-		glm::mat4 ModelMatrixSkybox = glm::mat4(1.0f);
+		glm::mat4 ModelMatrixSkybox = control->m_getCurCameraModelMatrix();
+		ModelMatrixSkybox[3][0] /= 1.1f;
+		ModelMatrixSkybox[3][1] /= 1.1f;
+		ModelMatrixSkybox[3][2] /= 1.1f;
 		glm::mat4 tempMVP = ProjectionMatrix * ViewMatrix * ModelMatrixSkybox;
-
 		
+
+
+		//glUseProgram(skyboxManager->shaderSkyboxVec[skyboxManager->selectedSkyboxShaderIdx]->m_shaderID);
 		skyboxManager->setUniformModelMatrix(ModelMatrixSkybox);
 		skyboxManager->setUniformViewMatrix(ViewMatrix);
 		skyboxManager->setUniformMVPMatrix(tempMVP);
 		skyboxManager->drawSkyBox();
 
 
-		// Render to the screen
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glViewport(0, 0, windowWidth, windowHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK); // Cull back-facing triangles -> draw only front-facing triangles
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
 		glUseProgram(shaderMainPtr->m_shaderID);
 
 		

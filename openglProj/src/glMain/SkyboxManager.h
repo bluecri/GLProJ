@@ -17,6 +17,10 @@ class SkyboxObjManager {
 		GLuint m_skyboxVertexID;
 		GLuint m_skyboxVertexBufferID;
 
+		glm::mat4 m_modelMatrix;
+		glm::mat4 m_viewMatrix;
+		glm::mat4 m_mvpMatrix;
+
 		enum ENUM_SKYBOX_SHADER {
 			DEFAULT = 0
 		};
@@ -30,13 +34,14 @@ class SkyboxObjManager {
 		};
 
 
-		std::vector<std::vector<std::string>> loadFilePath = { {"texture/skybox_up.dds", "texture/skybox_down.dds", "texture/skybox_left.dds", "texture/skybox_right.dds", "texture/skybox_front.dds", "texture/skybox_back.dds" } };
+		//std::vector<std::vector<std::string>> loadFilePath = { {"texture/skybox_up.dds", "texture/skybox_down.dds", "texture/skybox_left.dds", "texture/skybox_right.dds", "texture/skybox_front.dds", "texture/skybox_back.dds" } };
+		std::vector<std::vector<std::string>> loadFilePath = { { "texture/sky_bot.dds", "texture/sky_top.dds", "texture/sky_back.dds", "texture/sky_front.dds", "texture/sky_right.dds", "texture/sky_left.dds" } };
 		std::vector<SkyboxObj*> skyboxObjStorageVec;
 		int selectedSkyboxTextureIdx = 0;
 
 		SkyboxObjManager(){
 			for (int i = 0; i < loadFilePath.size(); i++) {
-				skyboxObjStorageVec.push_back(new SkyboxObj(loadFilePath[i][0].c_str(), loadFilePath[i][1].c_str(), loadFilePath[i][2].c_str(), loadFilePath[i][3].c_str(), loadFilePath[i][4].c_str(), loadFilePath[i][5].c_str()));
+				skyboxObjStorageVec.push_back(new SkyboxObj(loadFilePath[i][0].c_str(), loadFilePath[i][1].c_str(), loadFilePath[i][2].c_str(), loadFilePath[i][3].c_str(), loadFilePath[i][4].c_str(), loadFilePath[i][5].c_str(), 50.0f));
 			}
 		};
 
@@ -49,19 +54,20 @@ class SkyboxObjManager {
 					shaderSkyboxVec.push_back(tempShaderSkybox);
 				}
 			}
+			float d = skyboxObjStorageVec[0]->m_skybox_distance;
 
 			std::vector<glm::vec3> skyboxVertices{
 				// up down
-				glm::vec3(-50.0f, 50.0f, -50.0f), glm::vec3(50.0f, 50.0f, -50.0f), glm::vec3(-50.0f, 50.0f, 50.0f), glm::vec3(50.0f, 50.0f, 50.0f),
-				glm::vec3(50.0f, -50.0f, -50.0f), glm::vec3(-50.0f, -50.0f, -50.0f), glm::vec3(50.0f, -50.0f, 50.0f), glm::vec3(-50.0f, -50.0f, 50.0f),
+				glm::vec3(-d, d, -d), glm::vec3(d, d, -d), glm::vec3(-d, d, d), glm::vec3(d, d, d),
+				glm::vec3(d, -d, -d), glm::vec3(-d, -d, -d), glm::vec3(d, -d, d), glm::vec3(-d, -d, d),
 				
 				// left right
-				glm::vec3(-50.0f, 50.0f, 50.0f), glm::vec3(-50.0f, -50.0f, 50.0f), glm::vec3(-50.0f, 50.0f, -50.0f), glm::vec3(-50.0f, -50.0f, -50.0f),
-				glm::vec3(50.0f, 50.0f, -50.0f), glm::vec3(50.0f, -50.0f, -50.0f), glm::vec3(50.0f, 50.0f, 50.0f), glm::vec3(50.0f, -50.0f, 50.0f),
+				glm::vec3(-d, d, d), glm::vec3(-d, -d, d), glm::vec3(-d, d, -d), glm::vec3(-d, -d, -d),
+				glm::vec3(d, d, -d), glm::vec3(d, -d, -d), glm::vec3(d, d, d), glm::vec3(d, -d, d),
 
 				// front back
-				glm::vec3(50.0f, 50.0f, 50.0f), glm::vec3(50.0f, -50.0f, 50.0f), glm::vec3(-50.0f, 50.0f, 50.0f), glm::vec3(-50.0f, -50.0f, 50.0f),
-				glm::vec3(-50.0f, 50.0f, -50.0f), glm::vec3(-50.0f, -50.0f, -50.0f), glm::vec3(50.0f, 50.0f, -50.0f), glm::vec3(50.0f, -50.0f, -50.0f)
+				glm::vec3(d, d, d), glm::vec3(d, -d, d), glm::vec3(-d, d, d), glm::vec3(-d, -d, d),
+				glm::vec3(-d, d, -d), glm::vec3(-d, -d, -d), glm::vec3(d, d, -d), glm::vec3(d, -d, -d)
 			};
 			std::vector<glm::vec2> skyboxIndices
 			{
@@ -91,7 +97,7 @@ class SkyboxObjManager {
 			glGenBuffers(1, &m_skyboxVertexBufferID);
 
 			glBindBuffer(GL_ARRAY_BUFFER, m_skyboxVertexBufferID);
-			glBufferData(GL_ARRAY_BUFFER, make_buffer.size() * sizeof(Struct_VertexWithTexture), (void*)&make_buffer[0], GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, make_buffer.size() * sizeof(Struct_VertexWithTexture), (void*)&(make_buffer[0]), GL_STATIC_DRAW);
 			
 
 			glGenVertexArrays(1, &m_skyboxVertexID);
@@ -100,6 +106,7 @@ class SkyboxObjManager {
 			glEnableVertexAttribArray(1);
 			glEnableVertexAttribArray(2);
 
+			glBindBuffer(GL_ARRAY_BUFFER, m_skyboxVertexBufferID);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Struct_VertexWithTexture), (void*)0);
 			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Struct_VertexWithTexture), (void*)(sizeof(glm::vec3)));
 			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Struct_VertexWithTexture), (void*)(sizeof(glm::vec3) + sizeof(glm::vec2)));
@@ -109,29 +116,32 @@ class SkyboxObjManager {
 
 		void drawSkyBox() {
 			glUseProgram(shaderSkyboxVec[selectedSkyboxShaderIdx]->m_shaderID);
+			glUniformMatrix4fv(shaderSkyboxVec[selectedSkyboxShaderIdx]->m_modelMatrixID, 1, GL_FALSE, &m_modelMatrix[0][0]);
+			glUniformMatrix4fv(shaderSkyboxVec[selectedSkyboxShaderIdx]->m_cameraViewMatrixID, 1, GL_FALSE, &m_viewMatrix[0][0]);
+			glUniformMatrix4fv(shaderSkyboxVec[selectedSkyboxShaderIdx]->m_MVPMatrixID, 1, GL_FALSE, &m_mvpMatrix[0][0]);
+
 			glDepthMask(GL_FALSE);
 			glBindVertexArray(m_skyboxVertexID);
 
 			glBindBuffer(GL_ARRAY_BUFFER, m_skyboxVertexBufferID);
 			glActiveTexture(GL_TEXTURE5);
 			for (int i = 0; i < 6; i++) {
-				glBindTexture(GL_TEXTURE5, skyboxObjStorageVec[selectedSkyboxTextureIdx]->textureID[i]);
+				glBindTexture(GL_TEXTURE_2D, skyboxObjStorageVec[selectedSkyboxTextureIdx]->textureID[i]);
 				glUniform1i(shaderSkyboxVec[selectedSkyboxShaderIdx]->m_textureID, 5);
 				glDrawArrays(GL_TRIANGLE_STRIP, i * 4, 4);
-				
 			}
 			glBindVertexArray(0);
 			glDepthMask(GL_TRUE);
 		}
 
 		void setUniformModelMatrix(glm::mat4 &modelMatrix) {
-			glUniformMatrix4fv(shaderSkyboxVec[selectedSkyboxShaderIdx]->m_modelMatrixID, 1, GL_FALSE, &modelMatrix[0][0]);
+			m_modelMatrix = modelMatrix;
 		}
 		void setUniformViewMatrix(glm::mat4 &viewMatrix) {
-			glUniformMatrix4fv(shaderSkyboxVec[selectedSkyboxShaderIdx]->m_modelMatrixID, 1, GL_FALSE, &viewMatrix[0][0]);
+			m_viewMatrix = viewMatrix;
 		}
 		void setUniformMVPMatrix(glm::mat4 &mvpMatrix) {
-			glUniformMatrix4fv(shaderSkyboxVec[selectedSkyboxShaderIdx]->m_modelMatrixID, 1, GL_FALSE, &mvpMatrix[0][0]);
+			m_mvpMatrix = mvpMatrix;
 		}
 
 		~SkyboxObjManager() {
