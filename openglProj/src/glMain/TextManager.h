@@ -6,7 +6,11 @@
 
 #include <glm/glm.hpp>
 
+#include <src/glMain/ShaderText.h>
 #include <src/glMain/Text2DObj.h>
+
+#include <PrintTextListObj.h>
+#include <list>
 
 class TextManager {
 public:
@@ -17,6 +21,8 @@ public:
 	std::vector<ShaderText*> shaderTextVec;	//shader list
 	std::vector<GLuint> textTextureVec;	//texture list
 	std::vector<Text2DObj*> text2DObjPtrVec;	//text2dObj list
+
+	std::list<PrintTextListObj> printTextList;
 
 	//
 	TextManager() {
@@ -73,6 +79,37 @@ public:
 		text2DObjPtrVec.push_back(newText);
 	}
 	*/
+
+	void addPrintTextList(PrintTextListObj& ptlObj) {
+		printTextList.push_back(ptlObj);
+	}
+
+	void addPrintTextList(int index, const char * text, int x, int y, int size, float durationTime) {
+		PrintTextListObj ptlObj(index, text, x, y, size, durationTime);
+		printTextList.push_back(ptlObj);
+	}
+
+	void addPrintTextListWithRaycast(int index, const char * text, glm::vec3 modelVec, int size, float durationTime) {
+		int x = 140, y = 140;
+
+		//TODO: raycase , get x, y, size
+		
+		PrintTextListObj ptlObj(index, text, x, y, size, durationTime);
+		printTextList.push_back(ptlObj);
+	}
+
+	void printAllLIst(float deltaTime) {
+		std::list<PrintTextListObj>::iterator it = printTextList.begin();
+		for (; it != printTextList.end(); ++it) {
+			if (it->m_printDurationDeltaTime > 0.0) {
+				printText2DWithIndex(it->m_textManagerIndex, it->m_text, it->m_x, it->m_y, it->m_size);
+				it->m_printDurationDeltaTime -= deltaTime;
+			}
+			else {
+				it = printTextList.erase(it);
+			}
+		}
+	}
 
 	void printText2DWithIndex(int index, const char * text, int x, int y, int size) {
 		unsigned int length = strlen(text);

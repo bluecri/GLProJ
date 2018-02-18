@@ -57,8 +57,7 @@ int Window::init(int width, int height) {
 	glEnable(GL_CULL_FACE);
 
 	//camera & control
-	control = new Control();
-	control->m_window = m_window;
+	control = new Control(m_window, width, height);
 	control->m_cameraAdd(glm::vec3(4.0f, 3.0f, 3.0f), 55.0f, 50.0f, 45.0f, 3.0f, 0.005f, 4.0f, 3.0f, 0.1f, 140.0f);
 	control->m_changeCameraIndex(0);
 
@@ -263,7 +262,7 @@ int Window::draws() {
 			}
 		}
 
-		//textManager->printText2DWithIndex(0, "adf", 160, 120, 40);
+		textManager->printText2DWithIndex(0, "adf", 160, 120, 40);
 		//textManager->printText2DWithIndex(0, "abcdefghijklmnopqrstuvwxyz", 120, 120, 40);
 		//textManager->printText2DWithIndex(0, "ABCDEFGHIJKLMNOPQUSTUVWXYZ", 120, 170, 40);
 

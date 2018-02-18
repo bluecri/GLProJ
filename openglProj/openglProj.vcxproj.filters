@@ -108,6 +108,9 @@
     <ClCompile Include="src\glMain\SkyboxObj.cpp">
       <Filter>소스 파일\glMain</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerPlane.cpp">
+      <Filter>헤더 파일\game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\glMain\Vertex.h">
@@ -204,6 +207,21 @@
       <Filter>헤더 파일\glMain</Filter>
     </ClInclude>
     <ClInclude Include="DDOWithCollision.h">
+      <Filter>헤더 파일\game</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>헤더 파일\game</Filter>
+    </ClInclude>
+    <ClInclude Include="DmgPrintUI.h">
+      <Filter>소스 파일\game</Filter>
+    </ClInclude>
+    <ClInclude Include="PrintTextListObj.h">
+      <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerPlane.h">
+      <Filter>헤더 파일\game</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaneDeltaParam.h">
       <Filter>헤더 파일\game</Filter>
     </ClInclude>
   </ItemGroup>

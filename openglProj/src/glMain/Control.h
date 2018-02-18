@@ -39,8 +39,23 @@ public:
 	float m_deltaTime = 0;							///> delta time
 	int m_fps = 0;	//use this for print frame per sec
 
-	Control() {
+	int m_width, m_height;	//window size;
+	float m_mouseDeltaXPos, m_mouseDeltaYPos;
+
+	enum EnumKey
+	{
+		UP = 0, DOWN, LEFT, RIGHT, SPACE, MOUSE_LEFT, ENUM_KEY_LEN
+	};
+	bool iskeyUp[ENUM_KEY_LEN];
+	
+	
+
+	Control(GLFWwindow* window, int width, int height) : m_width(width), m_height(height){
 		//m_cameraObjectVec.push_back(new CameraObject());
+		m_window = window;
+		glfwSetCursorPos(m_window, m_width / 2, m_height / 2);	//reset to center position
+		m_mouseDeltaXPos = m_width / 2;
+		m_mouseDeltaYPos = m_width / 2;
 	}
 
 	Control(int cameraNum) {
@@ -64,8 +79,9 @@ public:
 
 	void m_changeCameraIndex(int idx);
 	void m_controlProgress();
-	void m_calcDeltaTime();
+	float m_calcDeltaTime();
 	void m_modifyCurCameraWithInput();
+	void m_inputProgress();
 	glm::mat4 m_getCurCameraProjectionMatrix();
 	glm::mat4 m_getCurCameraModelMatrix();
 	glm::mat4 m_getCurCameraViewMatrix();

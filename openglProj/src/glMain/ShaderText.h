@@ -1,3 +1,4 @@
+#pragma once
 #include <src/glMain/ShaderObj.h>
 
 class ShaderText : public ShaderObj{	

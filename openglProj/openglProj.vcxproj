@@ -51,6 +51,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DesktopRelease|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PlayerPlane.cpp" />
     <ClCompile Include="src\game\CameraObject.cpp" />
     <ClCompile Include="src\game\DrawableObjectWithTexture.cpp" />
     <ClCompile Include="src\game\DynamicDrawableObjectWithTexture.cpp" />
@@ -80,7 +81,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DesktopRelease|Win32'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="DDOWithCollision.h" />
+    <ClInclude Include="DmgPrintUI.h" />
     <ClInclude Include="OBBStruct.h" />
+    <ClInclude Include="Plane.h" />
+    <ClInclude Include="PlaneDeltaParam.h" />
+    <ClInclude Include="PlayerPlane.h" />
+    <ClInclude Include="PrintTextListObj.h" />
     <ClInclude Include="src\game\CameraObject.h" />
     <ClInclude Include="src\game\DrawableObject.h" />
     <ClInclude Include="src\game\DrawableObjectWithTexture.h" />
