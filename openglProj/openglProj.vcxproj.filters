@@ -200,6 +200,12 @@
     <ClInclude Include="src\glMain\ShaderSkybox.h">
       <Filter>헤더 파일\glMain</Filter>
     </ClInclude>
+    <ClInclude Include="OBBStruct.h">
+      <Filter>헤더 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="DDOWithCollision.h">
+      <Filter>헤더 파일\game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\DepthRTT.fragmentshader">

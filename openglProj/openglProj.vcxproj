@@ -79,6 +79,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DesktopDebug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DesktopRelease|Win32'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="DDOWithCollision.h" />
+    <ClInclude Include="OBBStruct.h" />
     <ClInclude Include="src\game\CameraObject.h" />
     <ClInclude Include="src\game\DrawableObject.h" />
     <ClInclude Include="src\game\DrawableObjectWithTexture.h" />

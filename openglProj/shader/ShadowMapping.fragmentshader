@@ -1,5 +1,14 @@
 #version 330 core
 
+
+struct Light
+{
+  vec3 eyePosOrDir;
+  bool isDirectional;
+  vec3 intensity;
+  float attenuation;
+};
+
 // Interpolated values from the vertex shaders
 in vec2 UV;
 in vec3 Position_worldspace;
@@ -35,6 +44,7 @@ vec2 poissonDisk[16] = vec2[](
    vec2( 0.19984126, 0.78641367 ), 
    vec2( 0.14383161, -0.14100790 ) 
 );
+
 
 // Returns a random number based on a vec3 and an int.
 float random(vec3 seed, int i){

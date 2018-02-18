@@ -19,7 +19,7 @@ class SkyboxObjManager {
 
 		glm::mat4 m_modelMatrix;
 		glm::mat4 m_viewMatrix;
-		glm::mat4 m_mvpMatrix;
+		glm::mat4 m_ProjectionMatrix;
 
 		enum ENUM_SKYBOX_SHADER {
 			DEFAULT = 0
@@ -116,9 +116,10 @@ class SkyboxObjManager {
 
 		void drawSkyBox() {
 			glUseProgram(shaderSkyboxVec[selectedSkyboxShaderIdx]->m_shaderID);
+			glm::mat4 tempMVP = m_ProjectionMatrix * m_viewMatrix * m_modelMatrix;
 			glUniformMatrix4fv(shaderSkyboxVec[selectedSkyboxShaderIdx]->m_modelMatrixID, 1, GL_FALSE, &m_modelMatrix[0][0]);
 			glUniformMatrix4fv(shaderSkyboxVec[selectedSkyboxShaderIdx]->m_cameraViewMatrixID, 1, GL_FALSE, &m_viewMatrix[0][0]);
-			glUniformMatrix4fv(shaderSkyboxVec[selectedSkyboxShaderIdx]->m_MVPMatrixID, 1, GL_FALSE, &m_mvpMatrix[0][0]);
+			glUniformMatrix4fv(shaderSkyboxVec[selectedSkyboxShaderIdx]->m_MVPMatrixID, 1, GL_FALSE, &tempMVP[0][0]);
 
 			glDepthMask(GL_FALSE);
 			glBindVertexArray(m_skyboxVertexID);
@@ -137,11 +138,18 @@ class SkyboxObjManager {
 		void setUniformModelMatrix(glm::mat4 &modelMatrix) {
 			m_modelMatrix = modelMatrix;
 		}
+		void setUniformModelMatrixWithDivide(glm::mat4 &modelMatrix, float div) {
+			m_modelMatrix = modelMatrix;
+			m_modelMatrix[3][0] /= div;
+			m_modelMatrix[3][1] /= div;
+			m_modelMatrix[3][2] /= div;
+		}
+		
 		void setUniformViewMatrix(glm::mat4 &viewMatrix) {
 			m_viewMatrix = viewMatrix;
 		}
-		void setUniformMVPMatrix(glm::mat4 &mvpMatrix) {
-			m_mvpMatrix = mvpMatrix;
+		void setUniformProjectionMatrix(glm::mat4 &projectionMatrix) {
+			m_ProjectionMatrix = projectionMatrix;
 		}
 
 		~SkyboxObjManager() {

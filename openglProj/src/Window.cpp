@@ -80,7 +80,12 @@ int Window::init(int width, int height) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthTexture, 0);
 	// No color output in the bound framebuffer, only depth.
-	glDrawBuffer(GL_NONE);
+
+	GLenum DrawBuffers[1] = { GL_DEPTH_ATTACHMENT };
+	glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
+
+	//glDrawBuffer(GL_NONE);	//above 2 line is same with this line.
+
 	// Always check that our framebuffer is ok
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		return false;
@@ -128,8 +133,10 @@ int Window::mains() {
 	textManager->textManagerInit();
 	skyboxManager->bufferInit();
 	
-	makeObject("firstObjec2", "room", "uvMapTexture", glm::vec3(0, 0, 2), glm::vec3(), glm::vec3(1, 1, 1));
-	makeObject("firstObject3", "room", "uvMapTexture", glm::vec3(), glm::vec3(), glm::vec3(1, 1, 1));
+	//collision box
+	float collisionBox[3] = { 3.0f, 3.0f, 3.0f };
+	makeObject("firstObjec2", "room", "uvMapTexture", glm::vec3(0, 0, 2), glm::vec3(), glm::vec3(1, 1, 1) , collisionBox);
+	makeObject("firstObject3", "room", "uvMapTexture", glm::vec3(), glm::vec3(), glm::vec3(1, 1, 1), collisionBox);
 
 	//make object
 	//makeObject("firstObject", "smallShip", "uvMapTexture", glm::vec3(), glm::vec3(), glm::vec3(0.2f, .2f, .2f));
@@ -157,6 +164,7 @@ int Window::draws() {
 
 		// Render to our framebuffer
 		glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
+		
 		glViewport(0, 0, 1024, 1024); // Render on the whole framebuffer, complete from the lower left corner to the upper right
 		glEnable(GL_CULL_FACE);
 		glDisable(GL_CULL_FACE);
@@ -204,26 +212,17 @@ int Window::draws() {
 		glm::mat4 ProjectionMatrix = control->m_getCurCameraProjectionMatrix();
 		glm::mat4 ViewMatrix = control->m_getCurCameraViewMatrix();	//look at
 		glm::mat4 ModelMatrixSkybox = control->m_getCurCameraModelMatrix();
-		ModelMatrixSkybox[3][0] /= 1.1f;
-		ModelMatrixSkybox[3][1] /= 1.1f;
-		ModelMatrixSkybox[3][2] /= 1.1f;
-		glm::mat4 tempMVP = ProjectionMatrix * ViewMatrix * ModelMatrixSkybox;
 		
-
-
-		//glUseProgram(skyboxManager->shaderSkyboxVec[skyboxManager->selectedSkyboxShaderIdx]->m_shaderID);
-		skyboxManager->setUniformModelMatrix(ModelMatrixSkybox);
+		skyboxManager->setUniformModelMatrixWithDivide(ModelMatrixSkybox, 1.1f);
 		skyboxManager->setUniformViewMatrix(ViewMatrix);
-		skyboxManager->setUniformMVPMatrix(tempMVP);
+		skyboxManager->setUniformProjectionMatrix(ProjectionMatrix);
 		skyboxManager->drawSkyBox();
 
 
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK); // Cull back-facing triangles -> draw only front-facing triangles
-		
 		glUseProgram(shaderMainPtr->m_shaderID);
 
-		
 		glm::mat4 biasMatrix(
 			0.5, 0.0, 0.0, 0.0,
 			0.0, 0.5, 0.0, 0.0,
@@ -293,11 +292,11 @@ int Window::draws() {
 *	@param glm::vec3 scaleVec scale vector
 *	@return void
 */
-void Window::makeObject(std::string objName, std::string vertexObjectName, std::string textureName, glm::vec3 modelVec, glm::vec3 angleVec, glm::vec3 scaleVec) {
+void Window::makeObject(std::string objName, std::string vertexObjectName, std::string textureName, glm::vec3 modelVec, glm::vec3 angleVec, glm::vec3 scaleVec, float axisLen[3]) {
 	int textureIndex = openglResourceManager->getBLTIndexWithName(textureName);
 	int objectIndex = openglResourceManager->getBLVWTIndexWithName(vertexObjectName);
 
-	DynamicDrawableObjectWithTexture* newGameObj = new DynamicDrawableObjectWithTexture(objName, objectStorage[textureIndex][objectIndex].size(), textureIndex, objectIndex, modelVec, angleVec, scaleVec, false);
+	DynamicDrawableObjectWithTexture* newGameObj = new DDOWithCollision(objName, objectStorage[textureIndex][objectIndex].size(), textureIndex, objectIndex, modelVec, angleVec, scaleVec, axisLen, false);
 	m_NameToDrawingObjectMap.insert(std::make_pair(objName, newGameObj));
 	objectStorage[textureIndex][objectIndex].push_back(newGameObj);
 }

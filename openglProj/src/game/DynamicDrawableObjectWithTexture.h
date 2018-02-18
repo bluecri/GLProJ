@@ -4,8 +4,12 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 
+#include <OBBStruct.h>
+
 class DynamicDrawableObjectWithTexture : public DrawableObjectWithTexture {
+
 public:
+	
 	glm::mat4 m_modelMatrix;
 
 	bool needUpdateRotateMatrix;
@@ -17,6 +21,7 @@ public:
 
 	bool needUpdateQuat;
 	glm::quat m_quat;
+
 
 	DynamicDrawableObjectWithTexture(std::string name, int arrIdx, int textureidx, int vertexIdx, glm::vec3 modelVec, glm::vec3 angleVec, glm::vec3 scaleVec, bool isStatic) : DrawableObjectWithTexture(name, arrIdx, textureidx, vertexIdx, modelVec, isStatic) {
 		m_modelMatrix = glm::translate(glm::mat4(), modelVec);
@@ -31,11 +36,17 @@ public:
 		needUpdateRotateMatrix = false;
 		needUpdateRetMatrix = false;
 		needUpdateQuat = false;
-
 	}
+	
 
+	//for DDOWithCollision
+	virtual OBBClass* getObbClassPtr() {
+		return NULL;
+	};
 
-
+	virtual bool collisionCheck(DynamicDrawableObjectWithTexture &ddoWithTexture) {
+		return false;
+	}
 
 	// DrawableObjectWithTexture을(를) 통해 상속됨
 	virtual glm::mat4 getModelMatrix() override;
@@ -75,5 +86,6 @@ public:
 	virtual void accRotationMatrix(glm::quat quat) override;
 
 	virtual glm::mat4 getRetMatrix() override;
+
 
 };

@@ -26,6 +26,7 @@ using namespace glm;
 #include <src/glMain/ShaderManager.h>
 #include <src/glMain/TextManager.h>
 #include <src/glMain/SkyboxManager.h>
+#include <DDOWithCollision.h>
 #include <vector>
 #include <algorithm>
 
@@ -84,7 +85,7 @@ public:
 	int init(int width, int height);
 	int mains();
 	int draws();
-	void makeObject(std::string objName, std::string vertexObjectName, std::string textureName, glm::vec3 modelVec, glm::vec3 angleVec, glm::vec3 scaleVec);
+	void makeObject(std::string objName, std::string vertexObjectName, std::string textureName, glm::vec3 modelVec, glm::vec3 angleVec, glm::vec3 scaleVec, float axisLen[3]);
 	void deleteObject(std::string objName);
 
 	void deleteObjectRefresh();
