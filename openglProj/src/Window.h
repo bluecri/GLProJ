@@ -27,6 +27,9 @@ using namespace glm;
 #include <src/glMain/TextManager.h>
 #include <src/glMain/SkyboxManager.h>
 #include <DDOWithCollision.h>
+#include <HasCollisionObj.h>
+#include <EnemyPlane.h>
+#include <PlayerPlane.h>
 #include <vector>
 #include <algorithm>
 
@@ -50,6 +53,7 @@ public:
 	ShaderManager * shaderManager;
 	TextManager * textManager;
 	SkyboxObjManager * skyboxManager;
+	CameraObject * mainCameraObjectPtr;
 	
 	Control * control;
 
@@ -85,13 +89,14 @@ public:
 	int init(int width, int height);
 	int mains();
 	int draws();
-	void makeObject(std::string objName, std::string vertexObjectName, std::string textureName, glm::vec3 modelVec, glm::vec3 angleVec, glm::vec3 scaleVec, float axisLen[3]);
+	DynamicDrawableObjectWithTexture* makeObject(std::string objName, std::string vertexObjectName, std::string textureName, glm::vec3 modelVec, glm::vec3 angleVec, glm::vec3 scaleVec, glm::vec3 compenVec, float axisLen[3]);
 	void deleteObject(std::string objName);
 
 	void deleteObjectRefresh();
 
 	static bool cmpSortFunc(DrawableObjectWithTexture* (&o1), DrawableObjectWithTexture* (&o2));
 
+	std::list<HasCollisionObj*> hasCollisionObjList;
 
 	GLuint tempVID;
 	GLuint vertexbuffer;

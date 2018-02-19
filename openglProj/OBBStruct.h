@@ -6,20 +6,23 @@
 class OBBClass {
 	public:
 		glm::vec3 m_centerPosVec;		// = model vector
+		glm::vec3 m_centerCompensationVec;
 		glm::vec3 m_axisVec[3];	//x, y, z
 		float m_axisLen[3];	//x, y, z
 
 		OBBClass() {
 
 		}
-		OBBClass(float axisLen[3]) {
+		OBBClass(glm::vec3 centerCompensationVec, float axisLen[3]) {
+			m_centerCompensationVec = centerCompensationVec;
 			for (int i = 0; i < 3; i++) {
 				m_axisLen[i] = axisLen[i];
 			}
 		}
 
 		void initObbBeforeCollisionCheck(glm::vec3 modelVec, glm::mat4 rotationMatrix) {
-			m_centerPosVec = modelVec;
+			m_centerCompensationVec	//TODO : rotation add
+			m_centerPosVec = modelVec + m_centerCompensationVec;
 			for (int i = 0; i < 3; i++) {
 				for (int k = 0; k < 3; k++) {
 					m_axisVec[i][k] = rotationMatrix[i][k];	//init rotation of axis

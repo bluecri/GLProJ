@@ -21,7 +21,7 @@ public:
 
 	bool needUpdateQuat;
 	glm::quat m_quat;
-
+	
 
 	DynamicDrawableObjectWithTexture(std::string name, int arrIdx, int textureidx, int vertexIdx, glm::vec3 modelVec, glm::vec3 angleVec, glm::vec3 scaleVec, bool isStatic) : DrawableObjectWithTexture(name, arrIdx, textureidx, vertexIdx, modelVec, isStatic) {
 		m_modelMatrix = glm::translate(glm::mat4(), modelVec);
@@ -43,8 +43,7 @@ public:
 	virtual OBBClass* getObbClassPtr() {
 		return NULL;
 	};
-
-	virtual bool collisionCheck(DynamicDrawableObjectWithTexture &ddoWithTexture) {
+	virtual bool collisionCheck(DynamicDrawableObjectWithTexture* ddoWithTexturePtr) {
 		return false;
 	}
 

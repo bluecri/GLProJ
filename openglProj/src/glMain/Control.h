@@ -42,9 +42,10 @@ public:
 	int m_width, m_height;	//window size;
 	float m_mouseDeltaXPos, m_mouseDeltaYPos;
 
+
 	enum EnumKey
 	{
-		UP = 0, DOWN, LEFT, RIGHT, SPACE, MOUSE_LEFT, ENUM_KEY_LEN
+		UP = 0, DOWN, LEFT, RIGHT, SPACE, MOUSE_LEFT, ONE, TWO, THREE, FOUR, ENUM_KEY_LEN
 	};
 	bool iskeyUp[ENUM_KEY_LEN];
 	

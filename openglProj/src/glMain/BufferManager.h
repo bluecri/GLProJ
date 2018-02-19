@@ -25,6 +25,10 @@ public:
 	GLuint m_staticVertexBufferID;		///< static buffer
 	GLuint m_dynamicVertexBufferID;		///< dynamic buffer
 	GLuint m_elementBufferID;			///< element buffer
+
+	GLuint m_collisionBufferID;
+	GLuint m_collisionVertexID;
+	GLuint m_collisionElementID;
 	
 	//GLuint staticVertexID;
 

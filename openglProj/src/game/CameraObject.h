@@ -38,6 +38,8 @@ class CameraObject : public DrawableObject {
 
 		void updateViewMatrix();
 
+		void updateViewMatrixWithParam(glm::vec3 eye, glm::vec3 lookCenter, glm::vec3 up);
+
 		void updateProjectionMatrix();
 
 		glm::mat4 getProjectionMatrix() {

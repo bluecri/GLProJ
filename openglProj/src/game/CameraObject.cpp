@@ -64,6 +64,10 @@ void CameraObject::updateViewMatrix() {
 	viewMatrix = glm::lookAt(modelVec, modelVec + direction, up);
 }
 
+void CameraObject::updateViewMatrixWithParam(glm::vec3 eye, glm::vec3 lookCenter, glm::vec3 up) {
+	viewMatrix = glm::lookAt(eye, lookCenter, up);
+}
+
 void CameraObject::updateProjectionMatrix() {
 	projectionMatrix = glm::perspective(glm::radians(fov), horizontalFovValue / verticalFovValue, frontFrustrumValue, backFrustrumValue);
 }

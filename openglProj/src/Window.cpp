@@ -60,6 +60,7 @@ int Window::init(int width, int height) {
 	control = new Control(m_window, width, height);
 	control->m_cameraAdd(glm::vec3(4.0f, 3.0f, 3.0f), 55.0f, 50.0f, 45.0f, 3.0f, 0.005f, 4.0f, 3.0f, 0.1f, 140.0f);
 	control->m_changeCameraIndex(0);
+	mainCameraObjectPtr = new CameraObject(glm::vec3(4.0f, 3.0f, 3.0f), 55.0f, 50.0f, 45.0f, 3.0f, 0.005f, 4.0f, 3.0f, 0.1f, 140.0f);
 
 
 	// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
@@ -107,7 +108,7 @@ int Window::mains() {
 	skyboxManager = new SkyboxObjManager();
 
 	//load vertex, texture files
-	//openglResourceManager->addVertexVec("smallShip", "SpaceShip.obj");
+	openglResourceManager->addVertexVec("smallShip", "obj/SpaceShip.obj");
 	//openglResourceManager->addVertexVec("BigShip", "Aircraft_Export_Ready.obj");
 	//openglResourceManager->addVertexVec("monkeyVertex", "suzanne.obj");
 	//openglResourceManager->addTextureVec("uvMapTexture", "uvmap.DDS");
@@ -132,14 +133,20 @@ int Window::mains() {
 	textManager->textManagerInit();
 	skyboxManager->bufferInit();
 	
-	//collision box
-	float collisionBox[3] = { 3.0f, 3.0f, 3.0f };
-	makeObject("firstObjec2", "room", "uvMapTexture", glm::vec3(0, 0, 2), glm::vec3(), glm::vec3(1, 1, 1) , collisionBox);
-	makeObject("firstObject3", "room", "uvMapTexture", glm::vec3(), glm::vec3(), glm::vec3(1, 1, 1), collisionBox);
+	//make game object
+	float collisionBox[3] = { 1.0f, 1.0f, 1.0f };
+	glm::vec3 planeCollisionCenterCompensationVec(0.0f, 0.0f, 13.5f);
+	PlaneDeltaParam tempDeltaParam(0, 0, 0, 0.1, 0.8, 0.1, 0.1, 0.8, 0.1, 0.05, 0.05, 0.05);
 
-	//make object
-	//makeObject("firstObject", "smallShip", "uvMapTexture", glm::vec3(), glm::vec3(), glm::vec3(0.2f, .2f, .2f));
-	//makeObject("firstObject2", "monkeyVertex", "uvMapTexture", glm::vec3(4.5f, 4.5f, 7.2f), glm::vec3(), glm::vec3(1.0f, 1.0f, 1.0f));
+	DynamicDrawableObjectWithTexture* tempPlayerPlaneDDOPtr = makeObject("playerObject", "smallShip", "uvMapTexture", glm::vec3(0, 0, 0.1), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), planeCollisionCenterCompensationVec, collisionBox);
+	CollisionProcessInfo * planeCPI = new CollisionProcessInfo(10);
+	PlayerPlane* playerPlanePtr = new PlayerPlane(control, mainCameraObjectPtr, 100, planeCPI, 0.0f, 3.0f, 1.0f, textManager, (DDOWithCollision*)tempPlayerPlaneDDOPtr, tempDeltaParam);
+	hasCollisionObjList.push_back(playerPlanePtr);
+	
+
+	DynamicDrawableObjectWithTexture* tempEnemyPlaneDDOPtr = makeObject("enemyObject", "smallShip", "uvMapTexture", glm::vec3(), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), planeCollisionCenterCompensationVec, collisionBox);
+	EnemyPlane* tempEnemyPlanePtr = new EnemyPlane(playerPlanePtr, 100, planeCPI, 0.0f, 3.0f, 1.0f, textManager, (DDOWithCollision*)tempEnemyPlaneDDOPtr, tempDeltaParam);
+	hasCollisionObjList.push_back(tempEnemyPlanePtr);
 
 	return 0;
 }
@@ -155,11 +162,33 @@ int Window::draws() {
 	vector<GLuint> &vertexArrayVec = bufferManager->vertexArrayObjectIDVec;
 	ShaderObj* shaderMainPtr = shaderManager->getShaderPtrWithEnum(ShaderManager::ENUM_SHADER_IDX::MAIN);
 	ShaderObj* shaderShadowPtr = shaderManager->getShaderPtrWithEnum(ShaderManager::ENUM_SHADER_IDX::SHADOW);
+	ShaderObj* shaderCollisionPtr = shaderManager->getShaderPtrWithEnum(ShaderManager::ENUM_SHADER_IDX::COLISION);
 	//ShaderObj* shaderTextPtr = shaderManager->getShaderPtrWithEnum(ShaderManager::ENUM_SHADER_IDX::TEXT);
 
 	//main loop
 	do {
+		//collision check
+		std::list<HasCollisionObj*>::iterator collisionPtrListIterator, collisionPtrListInnerIterator;
+		
+		for (collisionPtrListIterator = hasCollisionObjList.begin(); collisionPtrListIterator != hasCollisionObjList.end(); ++collisionPtrListIterator) {
+			HasCollisionObj* tempCollisionPtr = *collisionPtrListIterator;
+			for (collisionPtrListInnerIterator = std::next(collisionPtrListIterator); collisionPtrListInnerIterator != hasCollisionObjList.end(); ++collisionPtrListInnerIterator) {
+				HasCollisionObj* tempCompCollisionPtr = *collisionPtrListInnerIterator;
+				if (tempCollisionPtr->collisionCheck(tempCompCollisionPtr)) {
+					//collision occur!
+					tempCollisionPtr->collisionOccur(tempCompCollisionPtr->m_cpi);
+					tempCompCollisionPtr->collisionOccur(tempCollisionPtr->m_cpi);
+				}
+			}
+		}
+
 		control->m_controlProgress();	//control
+		float deltaTimeInLoop = control->m_deltaTime;
+		//update() all obj
+		for (auto &elem : hasCollisionObjList) {
+			elem->update(deltaTimeInLoop);
+		}
+
 
 		// Render to our framebuffer
 		glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
@@ -208,9 +237,15 @@ int Window::draws() {
 		glViewport(0, 0, windowWidth, windowHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
 
 		//draw skybox
-		glm::mat4 ProjectionMatrix = control->m_getCurCameraProjectionMatrix();
-		glm::mat4 ViewMatrix = control->m_getCurCameraViewMatrix();	//look at
-		glm::mat4 ModelMatrixSkybox = control->m_getCurCameraModelMatrix();
+
+		//glm::mat4 ProjectionMatrix = control->m_getCurCameraProjectionMatrix();
+		//glm::mat4 ViewMatrix = control->m_getCurCameraViewMatrix();	//look at
+		//glm::mat4 ModelMatrixSkybox = control->m_getCurCameraModelMatrix();
+
+		//get camera matrix
+		glm::mat4 ProjectionMatrix = mainCameraObjectPtr->getProjectionMatrix();
+		glm::mat4 ViewMatrix = mainCameraObjectPtr->getViewMatrix();	//look at
+		glm::mat4 ModelMatrixSkybox = mainCameraObjectPtr->getModelMatrix();
 		
 		skyboxManager->setUniformModelMatrixWithDivide(ModelMatrixSkybox, 1.1f);
 		skyboxManager->setUniformViewMatrix(ViewMatrix);
@@ -262,6 +297,50 @@ int Window::draws() {
 			}
 		}
 
+		//collision box draw
+		glBindVertexArray(bufferManager->m_collisionVertexID);
+		glBindBuffer(GL_ARRAY_BUFFER, bufferManager->m_collisionBufferID);
+
+		GLsizeiptr vec3Size = sizeof(glm::vec3);
+		glBufferData(GL_ARRAY_BUFFER, vec3Size * hasCollisionObjList.size() * 8, 0, GL_STATIC_DRAW);
+		GLsizeiptr glSIzePtrForCollisionDraw = 0;
+		for (HasCollisionObj* objPtr : hasCollisionObjList) {
+			for (int x = -1; x <= 1; x+=2) {
+				for (int y = -1; y <= 1; y += 2) {
+					for (int z = -1; z <= 1; z += 2) {
+						glm::vec3 tempCollisionBoxPoint(objPtr->m_ddoWithCollision->pro_obbClass.m_centerCompensationVec);
+						float* tempCollisionAxisLen = objPtr->m_ddoWithCollision->pro_obbClass.m_axisLen;
+						tempCollisionBoxPoint += glm::vec3(x * tempCollisionAxisLen[0], y * tempCollisionAxisLen[1], z * tempCollisionAxisLen[2]);
+						glBufferSubData(GL_ARRAY_BUFFER, glSIzePtrForCollisionDraw, vec3Size, (void*)&(tempCollisionBoxPoint));
+						glSIzePtrForCollisionDraw += vec3Size;
+					}
+				}
+			}
+		}
+		GLsizeiptr unsignedShortSize = sizeof(unsigned short);
+		std::vector<unsigned short> boxElement = { 0, 1, 0, 2, 2, 3, 1, 3, 4, 5, 4, 6, 6, 7, 5, 7, 1, 5, 3, 7, 2, 6, 0, 4 };
+		int boxElementIndex = 0;
+		
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferManager->m_collisionElementID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, unsignedShortSize * hasCollisionObjList.size() * 24, (void*)&boxElement[0], GL_STATIC_DRAW);
+
+		GLsizeiptr collisionElementOffset = 0;
+		
+		glUseProgram(shaderCollisionPtr->m_shaderID);
+		for (HasCollisionObj* objPtr : hasCollisionObjList) {
+			glm::mat4 mvp = ProjectionMatrix * ViewMatrix * objPtr->m_ddoWithCollision->getModelMatrix() * objPtr->m_ddoWithCollision->getRotationMatrix();
+			glUniformMatrix4fv(shaderCollisionPtr->m_MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
+			glDrawElements(
+				GL_LINES,      // mode
+				24,    // count
+				GL_UNSIGNED_SHORT,   // type
+				(void*)0         // element array buffer offset
+			);
+		}
+		glBindVertexArray(0);
+
+
+		//UI draw
 		textManager->printText2DWithIndex(0, "adf", 160, 120, 40);
 		//textManager->printText2DWithIndex(0, "abcdefghijklmnopqrstuvwxyz", 120, 120, 40);
 		//textManager->printText2DWithIndex(0, "ABCDEFGHIJKLMNOPQUSTUVWXYZ", 120, 170, 40);
@@ -291,13 +370,14 @@ int Window::draws() {
 *	@param glm::vec3 scaleVec scale vector
 *	@return void
 */
-void Window::makeObject(std::string objName, std::string vertexObjectName, std::string textureName, glm::vec3 modelVec, glm::vec3 angleVec, glm::vec3 scaleVec, float axisLen[3]) {
+DynamicDrawableObjectWithTexture* Window::makeObject(std::string objName, std::string vertexObjectName, std::string textureName, glm::vec3 modelVec, glm::vec3 angleVec, glm::vec3 scaleVec, glm::vec3 compenVec, float axisLen[3]) {
 	int textureIndex = openglResourceManager->getBLTIndexWithName(textureName);
 	int objectIndex = openglResourceManager->getBLVWTIndexWithName(vertexObjectName);
 
-	DynamicDrawableObjectWithTexture* newGameObj = new DDOWithCollision(objName, objectStorage[textureIndex][objectIndex].size(), textureIndex, objectIndex, modelVec, angleVec, scaleVec, axisLen, false);
+	DynamicDrawableObjectWithTexture* newGameObj = new DDOWithCollision(objName, objectStorage[textureIndex][objectIndex].size(), textureIndex, objectIndex, modelVec, angleVec, scaleVec, compenVec, axisLen, false);
 	m_NameToDrawingObjectMap.insert(std::make_pair(objName, newGameObj));
 	objectStorage[textureIndex][objectIndex].push_back(newGameObj);
+	return newGameObj;
 }
 /**
 *   @brief Delete gameObject.

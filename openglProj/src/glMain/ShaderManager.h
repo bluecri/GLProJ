@@ -16,12 +16,12 @@ public:
 	std::vector<ShaderObj*> m_shaderStorage;
 	enum ENUM_SHADER_IDX
 	{
-		MAIN = 0, SHADOW = 1//, TEXT = 2
+		MAIN = 0, SHADOW = 1, COLISION = 2
 	};
 	ShaderManager() {
 		m_addMainShader("shader/ShadowMapping.vertexshader", "shader/ShadowMapping.fragmentshader");
 		m_addShadowShader("shader/DepthRTT.vertexshader", "shader/DepthRTT.fragmentshader");
-		//m_addTextShader("shader/TextVertexShader.vertexshader", "shader/TextVertexShader.fragmentshader");
+		m_addMainShader("shader/Simple.vertexshader", "shader/Simple.fragmentshader");
 	}
 	
 	int m_addMainShader(const char * vertexShader, const char * fragmentShader) {

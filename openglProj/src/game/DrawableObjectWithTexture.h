@@ -16,7 +16,7 @@ public:
 	int m_textureIdx;	//used by window.h
 	int m_idx;			//used by window.h
 	
-	DrawableObjectWithTexture(std::string name, int arrIdx, int textureIdx, int vertexIdx, glm::vec3 modlevec, bool isStatic) : DrawableObject(name, modelVec), m_idx(arrIdx), m_isStatic(isStatic), m_vertexIdx(vertexIdx), m_textureIdx(textureIdx){
+	DrawableObjectWithTexture(std::string name, int arrIdx, int textureIdx, int vertexIdx, glm::vec3 modelVec, bool isStatic) : DrawableObject(name, modelVec), m_idx(arrIdx), m_isStatic(isStatic), m_vertexIdx(vertexIdx), m_textureIdx(textureIdx){
 
 	}
 

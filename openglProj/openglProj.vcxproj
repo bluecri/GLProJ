@@ -73,6 +73,7 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CollisionProcessInfo.h" />
     <ClInclude Include="common\quaternion_utils.hpp" />
     <ClInclude Include="common\shader.hpp" />
     <ClInclude Include="common\tangentspace.hpp" />
@@ -82,6 +83,8 @@
     </ClInclude>
     <ClInclude Include="DDOWithCollision.h" />
     <ClInclude Include="DmgPrintUI.h" />
+    <ClInclude Include="EnemyPlane.h" />
+    <ClInclude Include="HasCollisionObj.h" />
     <ClInclude Include="OBBStruct.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="PlaneDeltaParam.h" />
@@ -119,6 +122,8 @@
     <None Include="shader\DepthRTT.vertexshader" />
     <None Include="shader\ShadowMapping.fragmentshader" />
     <None Include="shader\ShadowMapping.vertexshader" />
+    <None Include="shader\Simple.fragmentshader" />
+    <None Include="shader\Simple.vertexshader" />
     <None Include="shader\SkyboxMapping.fragmentshader" />
     <None Include="shader\SkyboxMapping.vertexshader" />
     <None Include="shader\TextVertexShader.fragmentshader" />

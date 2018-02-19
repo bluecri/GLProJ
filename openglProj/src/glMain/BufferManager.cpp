@@ -5,6 +5,8 @@ void BufferManager::initBuffer(OpenglResourceManager* openglResourceManagerPtr) 
 	m_openglResourceManagerPtr = openglResourceManagerPtr;
 	glGenBuffers(1, &m_staticVertexBufferID);
 	glGenBuffers(1, &m_elementBufferID);
+	glGenBuffers(1, &m_collisionBufferID);
+	glGenBuffers(1, &m_collisionElementID);
 
 	//setup array buffer
 	glBindBuffer(GL_ARRAY_BUFFER, m_staticVertexBufferID);
@@ -58,9 +60,17 @@ void BufferManager::initBuffer(OpenglResourceManager* openglResourceManagerPtr) 
 		glBindVertexArray(0);	//unbind!
 	}
 
-
 	
+	glGenVertexArrays(1, &m_collisionVertexID);
+	glBindVertexArray(m_collisionVertexID);
 
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_collisionBufferID);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_collisionElementID);
+
+	glBindVertexArray(0);	//unbind!
 	
 }
 

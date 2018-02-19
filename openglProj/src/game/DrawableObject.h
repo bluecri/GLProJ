@@ -12,7 +12,7 @@ class DrawableObject : public Object{
 		glm::vec3 modelVec;
 		bool bDelete = false;
 		DrawableObject() : Object(), modelVec(0.0f, 0.0f, 0.0f) {
-
+			
 		}
 		DrawableObject(std::string name) : Object(name), modelVec(0.0f, 0.0f, 0.0f) {
 

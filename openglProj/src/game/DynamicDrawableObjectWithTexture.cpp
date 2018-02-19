@@ -30,6 +30,7 @@ glm::quat DynamicDrawableObjectWithTexture::getQuarternion()
 
 void DynamicDrawableObjectWithTexture::setModelMatrix(glm::mat4 modelMat)
 {
+	(*this).modelVec = modelMat[3];
 	m_modelMatrix = modelMat;
 	needUpdateRetMatrix = true;
 }
@@ -49,6 +50,7 @@ void DynamicDrawableObjectWithTexture::setScaleMatrix(glm::mat4 scaleMat)
 
 void DynamicDrawableObjectWithTexture::setModelMatrix(glm::vec3 modelVec)
 {
+	(*this).modelVec = modelVec;
 	m_modelMatrix = glm::translate(glm::mat4(), modelVec);
 	needUpdateRetMatrix = true;
 }
@@ -73,6 +75,7 @@ void DynamicDrawableObjectWithTexture::setRotationMatrix(glm::quat quat)
 
 void DynamicDrawableObjectWithTexture::accModelMatrix(glm::mat4 modelMat)
 {
+	(*this).modelVec += glm::vec3(modelMat[3]);
 	m_modelMatrix[3][0] += modelMat[3][0];
 	m_modelMatrix[3][1] += modelMat[3][1];
 	m_modelMatrix[3][2] += modelMat[3][2];
@@ -94,6 +97,7 @@ void DynamicDrawableObjectWithTexture::accScaleMatrix(glm::mat4 scaleMat)
 
 void DynamicDrawableObjectWithTexture::accModelMatrix(glm::vec3 modelVec)
 {
+	(*this).modelVec += modelVec;
 	m_modelMatrix = glm::translate(m_modelMatrix, modelVec);
 	needUpdateRetMatrix = true;
 }

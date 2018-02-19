@@ -54,7 +54,11 @@ void Control::m_inputProgress() {
 	iskeyUp[EnumKey::LEFT] = (glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS);
 	iskeyUp[EnumKey::RIGHT] = (glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS);
 	iskeyUp[EnumKey::SPACE] = (glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS);
-	
+	iskeyUp[EnumKey::ONE] = (glfwGetKey(m_window, GLFW_KEY_1) == GLFW_PRESS);
+	iskeyUp[EnumKey::TWO] = (glfwGetKey(m_window, GLFW_KEY_2) == GLFW_PRESS);
+	iskeyUp[EnumKey::THREE] = (glfwGetKey(m_window, GLFW_KEY_3) == GLFW_PRESS);
+	iskeyUp[EnumKey::FOUR] = (glfwGetKey(m_window, GLFW_KEY_4) == GLFW_PRESS);
+
 }
 
 float Control::m_calcDeltaTime() {
