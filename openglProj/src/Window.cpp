@@ -127,24 +127,23 @@ int Window::mains() {
 			std::vector<std::vector<DrawableObjectWithTexture*>>(openglResourceManager->getBLVWTLen(),
 				std::vector<DrawableObjectWithTexture*>()));
 
-
 	//register to buffer
 	bufferManager->initBuffer(openglResourceManager);
 	textManager->textManagerInit();
 	skyboxManager->bufferInit();
 	
 	//make game object
-	float collisionBox[3] = { 1.0f, 1.0f, 1.0f };
-	glm::vec3 planeCollisionCenterCompensationVec(0.0f, 0.0f, 13.5f);
+	float collisionBox[3] = { 1.3f, 0.3f, 1.0f };
+	glm::vec3 planeCollisionCenterCompensationVec(0.0f, 0.0f, 0.5f);
 	PlaneDeltaParam tempDeltaParam(0, 0, 0, 0.1, 0.8, 0.1, 0.1, 0.8, 0.1, 0.05, 0.05, 0.05);
 
 	DynamicDrawableObjectWithTexture* tempPlayerPlaneDDOPtr = makeObject("playerObject", "smallShip", "uvMapTexture", glm::vec3(0, 0, 0.1), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), planeCollisionCenterCompensationVec, collisionBox);
 	CollisionProcessInfo * planeCPI = new CollisionProcessInfo(10);
-	PlayerPlane* playerPlanePtr = new PlayerPlane(control, mainCameraObjectPtr, 100, planeCPI, 0.0f, 3.0f, 1.0f, textManager, (DDOWithCollision*)tempPlayerPlaneDDOPtr, tempDeltaParam);
+	PlayerPlane* playerPlanePtr = new PlayerPlane(control, mainCameraObjectPtr, 100, planeCPI, 0.0f, 4.0f, 1.0f, textManager, (DDOWithCollision*)tempPlayerPlaneDDOPtr, tempDeltaParam);
 	hasCollisionObjList.push_back(playerPlanePtr);
 	
 
-	DynamicDrawableObjectWithTexture* tempEnemyPlaneDDOPtr = makeObject("enemyObject", "smallShip", "uvMapTexture", glm::vec3(), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), planeCollisionCenterCompensationVec, collisionBox);
+	DynamicDrawableObjectWithTexture* tempEnemyPlaneDDOPtr = makeObject("enemyObject", "smallShip", "uvMapTexture", glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), planeCollisionCenterCompensationVec, collisionBox);
 	EnemyPlane* tempEnemyPlanePtr = new EnemyPlane(playerPlanePtr, 100, planeCPI, 0.0f, 3.0f, 1.0f, textManager, (DDOWithCollision*)tempEnemyPlaneDDOPtr, tempDeltaParam);
 	hasCollisionObjList.push_back(tempEnemyPlanePtr);
 
@@ -310,7 +309,7 @@ int Window::draws() {
 					for (int z = -1; z <= 1; z += 2) {
 						glm::vec3 tempCollisionBoxPoint(objPtr->m_ddoWithCollision->pro_obbClass.m_centerCompensationVec);
 						float* tempCollisionAxisLen = objPtr->m_ddoWithCollision->pro_obbClass.m_axisLen;
-						tempCollisionBoxPoint += glm::vec3(x * tempCollisionAxisLen[0], y * tempCollisionAxisLen[1], z * tempCollisionAxisLen[2]);
+						tempCollisionBoxPoint += glm::vec3(float(x) * 0.5 * tempCollisionAxisLen[0], float(y) * 0.5 * tempCollisionAxisLen[1], float(z) * 0.5 * tempCollisionAxisLen[2]);
 						glBufferSubData(GL_ARRAY_BUFFER, glSIzePtrForCollisionDraw, vec3Size, (void*)&(tempCollisionBoxPoint));
 						glSIzePtrForCollisionDraw += vec3Size;
 					}

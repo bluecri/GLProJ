@@ -21,8 +21,7 @@ class OBBClass {
 		}
 
 		void initObbBeforeCollisionCheck(glm::vec3 modelVec, glm::mat4 rotationMatrix) {
-			m_centerCompensationVec	//TODO : rotation add
-			m_centerPosVec = modelVec + m_centerCompensationVec;
+			m_centerPosVec = modelVec + glm::vec3(rotationMatrix * glm::vec4(m_centerCompensationVec, 1));
 			for (int i = 0; i < 3; i++) {
 				for (int k = 0; k < 3; k++) {
 					m_axisVec[i][k] = rotationMatrix[i][k];	//init rotation of axis
