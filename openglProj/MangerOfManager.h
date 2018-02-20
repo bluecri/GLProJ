@@ -94,7 +94,8 @@ public :
 
 	void makeGameObjects() {
 		//make game object
-		float collisionBox[3] = { 1.3f, 0.3f, 1.0f };
+		//float collisionBox[3] = { 1.3f, 0.3f, 1.0f };
+		float collisionBox[3] = { 0.6f, 0.2f, 0.4f };
 		glm::vec3 planeCollisionCenterCompensationVec(0.0f, 0.0f, 0.5f);
 		PlaneDeltaParam tempDeltaParam(0, 0, 0, 0.1, 0.8, 0.1, 0.1, 0.8, 0.1, 0.05, 0.05, 0.05);
 
@@ -269,7 +270,8 @@ public :
 					for (int z = -1; z <= 1; z += 2) {
 						glm::vec3 tempCollisionBoxPoint(objPtr->m_ddoWithCollision->pro_obbClass.m_centerCompensationVec);
 						float* tempCollisionAxisLen = objPtr->m_ddoWithCollision->pro_obbClass.m_axisLen;
-						tempCollisionBoxPoint += glm::vec3(float(x) * 0.5 * tempCollisionAxisLen[0], float(y) * 0.5 * tempCollisionAxisLen[1], float(z) * 0.5 * tempCollisionAxisLen[2]);
+						tempCollisionBoxPoint += glm::vec3(float(x) * tempCollisionAxisLen[0], float(y) * tempCollisionAxisLen[1], float(z) * tempCollisionAxisLen[2]);
+
 						glBufferSubData(GL_ARRAY_BUFFER, glSIzePtrForCollisionDraw, vec3Size, (void*)&(tempCollisionBoxPoint));
 						glSIzePtrForCollisionDraw += vec3Size;
 					}
