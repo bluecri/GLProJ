@@ -32,6 +32,7 @@ using namespace glm;
 #include <PlayerPlane.h>
 #include <vector>
 #include <algorithm>
+#include <MangerOfManager.h>
 
 using namespace std;
 
@@ -48,20 +49,9 @@ class Window {
 public:
 	GLFWwindow * m_window;
 
-	OpenglResourceManager * openglResourceManager;
-	BufferManager * bufferManager;
-	ShaderManager * shaderManager;
-	TextManager * textManager;
-	SkyboxObjManager * skyboxManager;
-	CameraObject * mainCameraObjectPtr;
-	
-	Control * control;
+	ManagerOfManager * managerOfManager;
 
-	std::vector<std::vector<std::vector<DrawableObjectWithTexture*>>> objectStorage;
-	std::vector<std::vector<std::vector<DrawableObjectWithTexture*>>> deleteStorage;
 
-	//std::map<int, DrawableObjectWithTexture*>m_IDToDrawingObjectMap;
-	std::map<std::string, DrawableObjectWithTexture*>m_NameToDrawingObjectMap;
 
 	//shader
 	GLuint programID;
@@ -81,7 +71,7 @@ public:
 	GLuint depthMatrixID;
 
 	GLuint depthTexture;
-	GLuint FramebufferName;
+	//GLuint FramebufferName;
 
 	int windowWidth;
 	int windowHeight;
@@ -89,14 +79,6 @@ public:
 	int init(int width, int height);
 	int mains();
 	int draws();
-	DynamicDrawableObjectWithTexture* makeObject(std::string objName, std::string vertexObjectName, std::string textureName, glm::vec3 modelVec, glm::vec3 angleVec, glm::vec3 scaleVec, glm::vec3 compenVec, float axisLen[3]);
-	void deleteObject(std::string objName);
-
-	void deleteObjectRefresh();
-
-	static bool cmpSortFunc(DrawableObjectWithTexture* (&o1), DrawableObjectWithTexture* (&o2));
-
-	std::list<HasCollisionObj*> hasCollisionObjList;
 
 	GLuint tempVID;
 	GLuint vertexbuffer;

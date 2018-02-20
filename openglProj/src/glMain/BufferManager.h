@@ -30,6 +30,9 @@ public:
 	GLuint m_collisionVertexID;
 	GLuint m_collisionElementID;
 	
+	GLuint FramebufferName;
+	GLuint depthTexture;
+
 	//GLuint staticVertexID;
 
 	OpenglResourceManager* m_openglResourceManagerPtr;	

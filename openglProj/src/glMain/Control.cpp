@@ -44,10 +44,10 @@ void Control::m_modifyCurCameraWithInput() {
 void Control::m_inputProgress() {
 	double xPos, yPos;
 	glfwGetCursorPos(m_window, &xPos, &yPos);	//get
-	glfwSetCursorPos(m_window, 1024 / 2, 768 / 2);	//reset to center position
+	glfwSetCursorPos(m_window, m_width / 2, m_height / 2);	//reset to center position
 	
-	m_mouseDeltaXPos= float(1024 / 2 - xPos);
-	m_mouseDeltaYPos = float(768 / 2 - yPos);
+	m_mouseDeltaXPos= float(m_width / 2 - xPos);
+	m_mouseDeltaYPos = float(m_height / 2 - yPos);
 	
 	iskeyUp[EnumKey::UP] = (glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS);
 	iskeyUp[EnumKey::DOWN] = (glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS);

@@ -7,6 +7,9 @@ void BufferManager::initBuffer(OpenglResourceManager* openglResourceManagerPtr) 
 	glGenBuffers(1, &m_elementBufferID);
 	glGenBuffers(1, &m_collisionBufferID);
 	glGenBuffers(1, &m_collisionElementID);
+	glGenFramebuffers(1, &FramebufferName);
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	//setup array buffer
 	glBindBuffer(GL_ARRAY_BUFFER, m_staticVertexBufferID);
@@ -60,18 +63,36 @@ void BufferManager::initBuffer(OpenglResourceManager* openglResourceManagerPtr) 
 		glBindVertexArray(0);	//unbind!
 	}
 
-	
+	//collision vertex & element buffer
 	glGenVertexArrays(1, &m_collisionVertexID);
 	glBindVertexArray(m_collisionVertexID);
 
 	glEnableVertexAttribArray(0);
-
 	glBindBuffer(GL_ARRAY_BUFFER, m_collisionBufferID);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_collisionElementID);
-
 	glBindVertexArray(0);	//unbind!
-	
+
+
+	//depth frame buffer for shadow
+	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
+	glGenTextures(1, &depthTexture);
+	glBindTexture(GL_TEXTURE_2D, depthTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthTexture, 0);
+	// No color output in the bound framebuffer, only depth.
+
+	GLenum DrawBuffers[1] = { GL_DEPTH_ATTACHMENT };
+	glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		return;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);	
 }
 
 BufferManager::~BufferManager() {

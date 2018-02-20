@@ -73,6 +73,7 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="CollisionProcessInfo.h" />
     <ClInclude Include="common\quaternion_utils.hpp" />
     <ClInclude Include="common\shader.hpp" />
@@ -85,6 +86,7 @@
     <ClInclude Include="DmgPrintUI.h" />
     <ClInclude Include="EnemyPlane.h" />
     <ClInclude Include="HasCollisionObj.h" />
+    <ClInclude Include="MangerOfManager.h" />
     <ClInclude Include="OBBStruct.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="PlaneDeltaParam.h" />
