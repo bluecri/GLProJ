@@ -10,9 +10,10 @@
 #include <src/glMain/TextManager.h>
 #include <src/glMain/SkyboxManager.h>
 #include <src/game/DrawableObjectWithTexture.h>
+#include <windows.h>
 
 class ManagerOfManager {
-public :
+public:
 	OpenglResourceManager * openglResourceManager;
 	BufferManager* bufferManager;
 	ShaderManager* shaderManager;	//load shader in this func.
@@ -25,7 +26,7 @@ public :
 
 
 	//object storage
-	std::vector<std::vector<std::vector<DrawableObjectWithTexture*>>> objectStorage;
+	std::vector<std::vector<std::list<DrawableObjectWithTexture*>>> objectStorage;
 	std::vector<std::vector<std::vector<DrawableObjectWithTexture*>>> deleteStorage;
 
 	std::map<std::string, DrawableObjectWithTexture*>m_NameToDrawingObjectMap;
@@ -42,7 +43,7 @@ public :
 	glm::mat4 ViewMatrix;	//look at
 	glm::mat4 ModelMatrixSkybox;
 
-	ManagerOfManager(){
+	ManagerOfManager() {
 		openglResourceManager = new OpenglResourceManager();
 		bufferManager = new BufferManager();
 		shaderManager = new ShaderManager();	//load shader in this func.
@@ -69,6 +70,7 @@ public :
 		//load vertex, texture files to orm
 		openglResourceManager->addVertexVec("smallShip", "obj/SpaceShip.obj");
 		openglResourceManager->addVertexVec("room", "obj/room_thickwalls.obj");
+		openglResourceManager->addVertexVec("missile", "obj/missile.obj");
 		openglResourceManager->addTextureVec("uvMapTexture", "texture/uvmap.DDS");
 		//openglResourceManager->addVertexVec("BigShip", "Aircraft_Export_Ready.obj");
 		//openglResourceManager->addVertexVec("monkeyVertex", "suzanne.obj");
@@ -82,9 +84,9 @@ public :
 	void resourceObjectStorageInit() {
 		//make object storage for print : [textureNum][vertexNum][]
 		objectStorage =
-			std::vector<std::vector<std::vector<DrawableObjectWithTexture*>>>(openglResourceManager->getBLTLen(),
-				std::vector<std::vector<DrawableObjectWithTexture*>>(openglResourceManager->getBLVWTLen(),
-					std::vector<DrawableObjectWithTexture*>()));
+			std::vector<std::vector<std::list<DrawableObjectWithTexture*>>>(openglResourceManager->getBLTLen(),
+				std::vector<std::list<DrawableObjectWithTexture*>>(openglResourceManager->getBLVWTLen(),
+					std::list<DrawableObjectWithTexture*>()));
 
 		deleteStorage =
 			std::vector<std::vector<std::vector<DrawableObjectWithTexture*>>>(openglResourceManager->getBLTLen(),
@@ -109,6 +111,13 @@ public :
 		EnemyPlane* tempEnemyPlanePtr = new EnemyPlane(playerPlanePtr, 100, planeCPI, 0.0f, 3.0f, 1.0f, textManager, (DDOWithCollision*)tempEnemyPlaneDDOPtr, tempDeltaParam);
 		hasCollisionObjList.push_back(tempEnemyPlanePtr);
 
+
+		glm::vec3 missileCollisionCenterCompensationVec(0.0f, 0.0f, 0.0f);
+		float missileCollisionBox[3] = { 0.02f, 0.02f, 0.2f };
+		tempEnemyPlaneDDOPtr = makeObject("missieObj", "missile", "uvMapTexture", glm::vec3(2.0f, 2.0f, 5.0f), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), missileCollisionCenterCompensationVec, missileCollisionBox);
+		tempEnemyPlanePtr = new EnemyPlane(playerPlanePtr, 100, planeCPI, 0.0f, 3.0f, 1.0f, textManager, (DDOWithCollision*)tempEnemyPlaneDDOPtr, tempDeltaParam);
+		hasCollisionObjList.push_back(tempEnemyPlanePtr);
+
 	}
 
 	void collisionCheck() {
@@ -117,6 +126,7 @@ public :
 
 		for (collisionPtrListIterator = hasCollisionObjList.begin(); collisionPtrListIterator != hasCollisionObjList.end(); ++collisionPtrListIterator) {
 			HasCollisionObj* tempCollisionPtr = *collisionPtrListIterator;
+
 			for (collisionPtrListInnerIterator = std::next(collisionPtrListIterator); collisionPtrListInnerIterator != hasCollisionObjList.end(); ++collisionPtrListInnerIterator) {
 				HasCollisionObj* tempCompCollisionPtr = *collisionPtrListInnerIterator;
 				if (tempCollisionPtr->collisionCheck(tempCompCollisionPtr)) {
@@ -134,9 +144,14 @@ public :
 
 	void updateGameObject() {
 		float deltaTimeInLoop = control->m_deltaTime;
-		//update() all obj
-		for (auto &elem : hasCollisionObjList) {
-			elem->update(deltaTimeInLoop);
+
+		for (std::list<HasCollisionObj*>::iterator it = hasCollisionObjList.begin(); it != hasCollisionObjList.end(); ++it) {
+			(*it)->update(deltaTimeInLoop);			//update() all obj
+			if ((*it)->isCollisionObjDelete) {
+				(*it)->m_ddoWithCollision->isDrawableObjDelete = true;	//check one more time.
+				delete *it;
+				it = hasCollisionObjList.erase(it);		//remove collision obj
+			}
 		}
 	}
 
@@ -155,23 +170,29 @@ public :
 		// Use our shader
 		glUseProgram(shaderShadowPtr->m_shaderID);
 
-		
 
 		for (size_t i = 0; i < objectStorage.size(); i++) {
 			for (size_t k = 0; k < objectStorage[i].size(); k++) {
 				glBindVertexArray(bufferManager->vertexArrayObjectIDVec[k]);
+				for (std::list<DrawableObjectWithTexture*>::iterator it = objectStorage[i][k].begin(); it != objectStorage[i][k].end(); ++it) {
+					if ((*it)->isDrawableObjDelete) {
+						//erase
+						m_NameToDrawingObjectMap.erase((*it)->name);
+						it = objectStorage[i][k].erase(it);
+					}
+					else {
+						//draw
+						glm::mat4 depthModelMatrix = (*it)->getRetMatrix();
+						glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrixNEW * depthModelMatrix;
 
-				for (size_t idx = 0; idx < objectStorage[i][k].size(); idx++) {
-					glm::mat4 depthModelMatrix = objectStorage[i][k][idx]->getRetMatrix();
-					glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrixNEW * depthModelMatrix;
-
-					glUniformMatrix4fv(shaderShadowPtr->depthMatrixID, 1, GL_FALSE, &depthMVP[0][0]);
-					glDrawElements(
-						GL_TRIANGLES,      // mode
-						openglResourceManager->getBLVWTWithIndex(k)->getIndiceVecNum(),    // count
-						GL_UNSIGNED_SHORT,   // type
-						(void*)bufferManager->elementOffset[k]         // element array buffer offset
-					);
+						glUniformMatrix4fv(shaderShadowPtr->depthMatrixID, 1, GL_FALSE, &depthMVP[0][0]);
+						glDrawElements(
+							GL_TRIANGLES,      // mode
+							openglResourceManager->getBLVWTWithIndex(k)->getIndiceVecNum(),    // count
+							GL_UNSIGNED_SHORT,   // type
+							(void*)bufferManager->elementOffset[k]         // element array buffer offset
+						);
+					}
 				}
 				glBindVertexArray(0);
 			}
@@ -186,21 +207,24 @@ public :
 		glViewport(0, 0, control->m_width, control->m_height); // Render on the whole framebuffer, complete from the lower left corner to the upper right
 
 	}
+
 	void updateCameraMVP() {
 		ProjectionMatrix = mainCameraObjectPtr->getProjectionMatrix();
 		ViewMatrix = mainCameraObjectPtr->getViewMatrix();	//look at
 		ModelMatrixSkybox = mainCameraObjectPtr->getModelMatrix();
 	}
+
 	void drawSkybox() {
 		//draw skybox
 		//get camera matrix
-		
+
 
 		skyboxManager->setUniformModelMatrixWithDivide(ModelMatrixSkybox, 1.1f);
 		skyboxManager->setUniformViewMatrix(ViewMatrix);
 		skyboxManager->setUniformProjectionMatrix(ProjectionMatrix);
 		skyboxManager->drawSkyBox();
 	}
+
 	void drawObjects() {
 		ShaderObj* shaderMainPtr = shaderManager->getShaderPtrWithEnum(ShaderManager::ENUM_SHADER_IDX::MAIN);
 		glEnable(GL_CULL_FACE);
@@ -231,17 +255,19 @@ public :
 			for (size_t k = 0; k < objectStorage[i].size(); k++) {
 				glBindVertexArray(bufferManager->vertexArrayObjectIDVec[k]);
 
-				for (size_t idx = 0; idx < objectStorage[i][k].size(); idx++) {
-					glm::mat4 Model = objectStorage[i][k][idx]->getRetMatrix();
-					glm::mat4 mvp = ProjectionMatrix * ViewMatrix  * Model;
-					glUniformMatrix4fv(shaderMainPtr->m_modelMatrixID, 1, GL_FALSE, &Model[0][0]);
-					glUniformMatrix4fv(shaderMainPtr->m_MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
-					glDrawElements(
-						GL_TRIANGLES,      // mode
-						openglResourceManager->getBLVWTWithIndex(k)->getIndiceVecNum(),    // count
-						GL_UNSIGNED_SHORT,   // type
-						(void*)bufferManager->elementOffset[k]         // element array buffer offset
-					);
+				for (DrawableObjectWithTexture * storageElem : objectStorage[i][k]) {
+					if (storageElem->isDrawableObjDelete == false) {
+						glm::mat4 Model = storageElem->getRetMatrix();
+						glm::mat4 mvp = ProjectionMatrix * ViewMatrix  * Model;
+						glUniformMatrix4fv(shaderMainPtr->m_modelMatrixID, 1, GL_FALSE, &Model[0][0]);
+						glUniformMatrix4fv(shaderMainPtr->m_MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
+						glDrawElements(
+							GL_TRIANGLES,      // mode
+							openglResourceManager->getBLVWTWithIndex(k)->getIndiceVecNum(),    // count
+							GL_UNSIGNED_SHORT,   // type
+							(void*)bufferManager->elementOffset[k]         // element array buffer offset
+						);
+					}
 				}
 				glBindVertexArray(0);
 			}
@@ -257,6 +283,8 @@ public :
 	void collisionBoxDraw() {
 		ShaderObj* shaderCollisionPtr = shaderManager->getShaderPtrWithEnum(ShaderManager::ENUM_SHADER_IDX::COLISION);
 
+
+		glUseProgram(shaderCollisionPtr->m_shaderID);
 		//collision box draw
 		glBindVertexArray(bufferManager->m_collisionVertexID);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferManager->m_collisionBufferID);
@@ -264,6 +292,7 @@ public :
 		GLsizeiptr vec3Size = sizeof(glm::vec3);
 		glBufferData(GL_ARRAY_BUFFER, vec3Size * hasCollisionObjList.size() * 8, 0, GL_STATIC_DRAW);
 		GLsizeiptr glSIzePtrForCollisionDraw = 0;
+		std::vector<glm::vec3> vertexBuffer;
 		for (HasCollisionObj* objPtr : hasCollisionObjList) {
 			for (int x = -1; x <= 1; x += 2) {
 				for (int y = -1; y <= 1; y += 2) {
@@ -271,23 +300,35 @@ public :
 						glm::vec3 tempCollisionBoxPoint(objPtr->m_ddoWithCollision->pro_obbClass.m_centerCompensationVec);
 						float* tempCollisionAxisLen = objPtr->m_ddoWithCollision->pro_obbClass.m_axisLen;
 						tempCollisionBoxPoint += glm::vec3(float(x) * tempCollisionAxisLen[0], float(y) * tempCollisionAxisLen[1], float(z) * tempCollisionAxisLen[2]);
-
-						glBufferSubData(GL_ARRAY_BUFFER, glSIzePtrForCollisionDraw, vec3Size, (void*)&(tempCollisionBoxPoint));
-						glSIzePtrForCollisionDraw += vec3Size;
+						vertexBuffer.push_back(tempCollisionBoxPoint);
+						//glBufferSubData(GL_ARRAY_BUFFER, glSIzePtrForCollisionDraw, vec3Size, (void*)&(tempCollisionBoxPoint));
+						//glSIzePtrForCollisionDraw += vec3Size;
 					}
 				}
 			}
 		}
+		glBufferSubData(GL_ARRAY_BUFFER, 0, vec3Size * hasCollisionObjList.size() * 8, (void*)&(vertexBuffer[0]));
+
+
 		GLsizeiptr unsignedShortSize = sizeof(unsigned short);
 		std::vector<unsigned short> boxElement = { 0, 1, 0, 2, 2, 3, 1, 3, 4, 5, 4, 6, 6, 7, 5, 7, 1, 5, 3, 7, 2, 6, 0, 4 };
+		std::vector<unsigned short> boxElementVec(hasCollisionObjList.size() * 24);
+
+		int i = 0, loop = 0;
+		for (HasCollisionObj* objPtr : hasCollisionObjList) {
+			for (int k = 0; k < 24; k++, i++) {
+				boxElementVec[i] = boxElement[k] + 8 * loop;
+			}
+			loop++;
+		}
 		int boxElementIndex = 0;
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferManager->m_collisionElementID);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, unsignedShortSize * hasCollisionObjList.size() * 24, (void*)&boxElement[0], GL_STATIC_DRAW);
+		//glBufferData(GL_ELEMENT_ARRAY_BUFFER, unsignedShortSize * hasCollisionObjList.size() * 24, (void*)&boxElement[0], GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, unsignedShortSize * hasCollisionObjList.size() * 24, (void*)&boxElementVec[0], GL_STATIC_DRAW);
 
 		GLsizeiptr collisionElementOffset = 0;
 
-		glUseProgram(shaderCollisionPtr->m_shaderID);
 		for (HasCollisionObj* objPtr : hasCollisionObjList) {
 			glm::mat4 mvp = ProjectionMatrix * ViewMatrix * objPtr->m_ddoWithCollision->getModelMatrix() * objPtr->m_ddoWithCollision->getRotationMatrix();
 			glUniformMatrix4fv(shaderCollisionPtr->m_MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
@@ -295,8 +336,9 @@ public :
 				GL_LINES,      // mode
 				24,    // count
 				GL_UNSIGNED_SHORT,   // type
-				(void*)0         // element array buffer offset
+				(void*)collisionElementOffset         // element array buffer offset
 			);
+			collisionElementOffset += unsignedShortSize * 24;
 		}
 		glBindVertexArray(0);
 	}
@@ -322,6 +364,7 @@ public :
 
 		collisionBoxDraw();
 		endDraws();
+		PlaySoundA((LPCSTR) "C:\\kenny g.WAV", NULL, SND_FILENAME | SND_ASYNC);
 	}
 
 
@@ -345,79 +388,7 @@ public :
 		m_NameToDrawingObjectMap.insert(std::make_pair(objName, newGameObj));
 		objectStorage[textureIndex][objectIndex].push_back(newGameObj);
 		return newGameObj;
+
 	}
-	/**
-	*   @brief Delete gameObject.
-	*	@param std::string objName object name to delete
-	*	@return void
-	*/
-	void deleteObject(std::string objName) {
-		DrawableObjectWithTexture * obj = m_NameToDrawingObjectMap[objName];
-		int textureIdx = obj->m_textureIdx;
-		int vertexIdx = obj->m_vertexIdx;
-		deleteStorage[textureIdx][vertexIdx].push_back(obj);
-		obj->bDelete = true;
-	}
-
-	/**
-	*   @brief Delete garbage object.
-	*	@details deAlloc memory for gameobject
-	*	@param void
-	*	@return void
-	*/
-	void deleteObjectRefresh() {
-		for (size_t i = 0; i < deleteStorage.size(); i++) {
-			for (size_t k = 0; k < deleteStorage[i].size(); k++) {
-				if (deleteStorage[i][k].size() != 0) {
-					std::sort(deleteStorage[i][k].begin(), deleteStorage[i][k].end(), cmpSortFunc);	//[i][k] vector sort with index
-					DrawableObjectWithTexture * deleteObj = deleteStorage[i][k][0];
-
-					int deleteCount = 0;	//delete acc count
-					int deleteIdx;			//delete index
-
-
-					std::vector<DrawableObjectWithTexture*>::iterator it = deleteStorage[i][k].begin();	//iterator
-					deleteIdx = deleteObj->m_idx;
-					std::advance(it, deleteIdx - 1);
-
-					it = objectStorage[i][k].erase(it);
-					deleteCount++;
-
-					for (size_t p = 1; p < deleteStorage[i][k].size(); p++) {	//loop deleteObjectNum'th
-						for (int z = 0; z < deleteStorage[i][k][p]->m_idx - deleteIdx - 1; z++) {	//loop (new iterator) ~ (next delete iterator - 1)
-							(*it)->m_idx -= deleteCount;	//m_idx update
-							++it;				//next iterator
-						}
-						deleteIdx = (*it)->m_idx;	//deleteIdx update
-						it = objectStorage[i][k].erase(it);
-						deleteCount++;
-					}
-
-					//m_NameToDrawingObjectMap.erase() : erase map
-					//dealloc
-					for (size_t p = 0; p < deleteStorage[i][k].size(); p++) {
-						m_NameToDrawingObjectMap.erase(deleteStorage[i][k][p]->name);
-						delete deleteStorage[i][k][p];
-					}
-					//erase deleteStorage
-					deleteStorage[i][k].erase(deleteStorage[i][k].begin(), deleteStorage[i][k].end());
-
-				}
-			}
-			//int textureIdx = needToBeDeletedObjectVec[i]->m_textureIdx;
-			//int vertexIdx = needToBeDeletedObjectVec[i]->m_vertexIdx;
-		}
-	}
-
-	/**
-	*   @brief Gameobject sort function
-	*	@details sort gameobject according to object index
-	*	@return bool less
-	*/
-	static bool cmpSortFunc(DrawableObjectWithTexture* (&o1), DrawableObjectWithTexture* (&o2)) {
-		if (o1->m_idx < o2->m_idx) {
-			return true;
-		}
-		return false;
-	}
+	
 };

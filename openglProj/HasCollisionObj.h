@@ -5,6 +5,7 @@ class HasCollisionObj {
 public:
 	DDOWithCollision * m_ddoWithCollision;
 	CollisionProcessInfo * m_cpi;
+	bool isCollisionObjDelete = false;	//if false, dead object and will be deleted. Cannot access ddo.
 
 	HasCollisionObj(DDOWithCollision * ddoWithCollision, CollisionProcessInfo * cpi)
 		: m_ddoWithCollision(ddoWithCollision), m_cpi(cpi){
