@@ -5,7 +5,6 @@
 #include <src\glMain\Control.h>
 #include <PlaneDeltaParam.h>
 #include <PlayerPlane.h>
-#include <PortAudioClass.h>
 
 class EnemyPlane : public Plane {
 public:

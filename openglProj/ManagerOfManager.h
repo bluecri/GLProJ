@@ -17,7 +17,7 @@
 #include <SingletonManager.h>
 
 #include <windows.h>
-#include <PortAudioClass.h>
+#include <ALManager.h>
 
 class ManagerOfManager {
 public:
@@ -29,9 +29,10 @@ public:
 
 	CameraObject * mainCameraObjectPtr;
 	Control * control;
+	
 
-	PortAudioClass * portAudioManager;
-
+	//PortAudioClass * portAudioManage
+	
 	//object storage
 	std::vector<std::vector<std::list<DrawableObjectWithTexture*>>> objectStorage;
 	std::vector<std::vector<std::vector<DrawableObjectWithTexture*>>> deleteStorage;
@@ -56,7 +57,6 @@ public:
 		shaderManager = new ShaderManager();	//load shader in this func.
 		textManager = new TextManager();
 		skyboxManager = new SkyboxObjManager();
-		portAudioManager = new PortAudioClass();
 	}
 
 	void init(GLFWwindow* window, int width, int height) {
@@ -72,8 +72,6 @@ public:
 
 		textManager->textManagerInit();
 		skyboxManager->bufferInit();
-
-		portAudioManager->init();
 
 	}
 

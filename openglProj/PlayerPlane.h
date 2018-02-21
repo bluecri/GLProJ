@@ -4,7 +4,6 @@
 #include <src\glMain\Control.h>
 #include <PlaneDeltaParam.h>
 #include <CollisionProcessInfo.h>
-#include <PortAudioClass.h>
 
 class PlayerPlane : public Plane {
 public:

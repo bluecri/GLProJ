@@ -7,7 +7,6 @@
 #include <DmgPrintUI.h>
 #include <PlaneDeltaParam.h>
 #include <HasCollisionObj.h>
-#include <PortAudioClass.h>
 #include <string>
 
 class Plane : public HasCollisionObj{
