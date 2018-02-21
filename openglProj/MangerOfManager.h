@@ -364,7 +364,6 @@ public:
 
 		collisionBoxDraw();
 		endDraws();
-		PlaySoundA((LPCSTR) "C:\\kenny g.WAV", NULL, SND_FILENAME | SND_ASYNC);
 	}
 
 

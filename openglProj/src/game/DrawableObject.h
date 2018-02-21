@@ -1,10 +1,10 @@
 #pragma once
 
 #include <string>
-
 #include <src/game/Object.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
+
 
 class DrawableObject : public Object{
 	public:
@@ -32,5 +32,6 @@ class DrawableObject : public Object{
 		DrawableObject(std::string name, glm::vec3 vec) : Object(name), modelVec(vec) {
 			//modelMatrix = glm::translate(glm::mat4(), modelVec);
 		}
+
 		virtual ~DrawableObject(){}
 };

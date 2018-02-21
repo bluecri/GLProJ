@@ -239,6 +239,9 @@
     <ClInclude Include="MangerOfManager.h">
       <Filter>소스 파일\glMain</Filter>
     </ClInclude>
+    <ClInclude Include="PortAudioClass.h">
+      <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\DepthRTT.fragmentshader">

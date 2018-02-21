@@ -51,8 +51,6 @@ public:
 
 	ManagerOfManager * managerOfManager;
 
-
-
 	//shader
 	GLuint programID;
 	GLuint depthProgramID;
