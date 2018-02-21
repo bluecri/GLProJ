@@ -88,31 +88,75 @@ public:
 	}
 };
 
+class Dummy_thread_sound_class {
+public:
+	Dummy_thread_sound_class() {};
 
-void thread_function(PaStreamParameters * outputParameter, SampleInfo * sampleInfo);
+	bool play = false;
+
+	void thread_function(PaStreamParameters * outputParameter, SampleInfo * sampleInfo)
+	{
+		PaStream* inStream;
+		paTestData paData;
+
+		paData.frameIndex = 0;
+		paData.recordedSamples = sampleInfo->sample;
+		paData.maxFrameIndex = sampleInfo->maxFrameIndex;
+
+		Pa_OpenStream(
+			&inStream,
+			NULL, /* no input */
+			outputParameter,
+			SAMPLE_RATE,
+			FRAMES_PER_BUFFER,
+			paClipOff,      /* we won't output out of range samples so don't bother clipping them */
+			s_playCallback,
+			&paData);
+
+		if (inStream)
+		{
+			PaError err = paNoError;
+			err = Pa_StartStream(inStream);
+			if (err != paNoError)
+				return;
+
+			printf("Waiting for playback to finish.\n"); fflush(stdout);
+
+			while ((err = Pa_IsStreamActive(inStream)) == 1) {
+				Pa_Sleep(1000);
+			}
+			if (err < 0)
+				return;
+
+			err = Pa_CloseStream(inStream);
+			if (err != paNoError) return;
+
+			printf("Done.\n"); fflush(stdout);
+		}
+	}
+};
 
 
 
 class PortAudioClass {
 public:
 
-	PaStreamParameters  inputParameters,
-		outputParameters;
+	PaStreamParameters outputParameters;
 	PaError             err = paNoError;
-	
-	int                 i;
-	int                 totalFrames;
-	int                 numSamples;
-	int                 numBytes;
-	SAMPLE              max, val;
-	double              average;
+
+	Dummy_thread_sound_class dummyThreadSoundClass;
 
 	std::map<std::string, SampleInfo*> loadedSampleFilesMap;
 
 
 	void init() {
+		err = Pa_Initialize();
+		if (err != paNoError) {
+			fprintf(stderr, "Error: Pa_Initialize fail.\n");
+			return;
+		}
 		initOutputDevice();
-
+		loadSamplefiles();
 	}
 
 	int initOutputDevice() {
@@ -129,7 +173,7 @@ public:
 	}
 
 	void loadSamplefiles() {
-		std::vector<std::pair<std::string, std::string>> sampleFilesName = { std::make_pair("laserSound", "sound\recorded.raw") };
+		std::vector<std::pair<std::string, std::string>> sampleFilesName = { std::make_pair("laserSound", "./sound/recorded.raw") };
 		for (std::pair<std::string, std::string> elem : sampleFilesName) {
 			{
 				FILE  *fid;
@@ -149,7 +193,6 @@ public:
 					SampleInfo* sampleInfoPtr = new SampleInfo(sampleStroage, (int)((sizeof(char)*fileSizeL) / (NUM_CHANNELS * sizeof(SAMPLE))));
 					loadedSampleFilesMap.insert(std::make_pair(elem.first, sampleInfoPtr));
 					fclose(fid);
-					printf("Wrote data to 'recorded.raw'\n");
 				}
 			}
 			
@@ -157,58 +200,11 @@ public:
 	}
 
 	void playSound(std::string soundName) {
-		PaStream* paStreamPtr;
 		std::map<std::string, SampleInfo*>::iterator it = loadedSampleFilesMap.find(soundName);
 		if (it != loadedSampleFilesMap.end()) {
 			SampleInfo * sampleInfoPtr = (*it).second;
-			std::thread t(thread_function, &outputParameters, sampleInfoPtr);
+			std::thread t(&Dummy_thread_sound_class::thread_function, &dummyThreadSoundClass,  &outputParameters, sampleInfoPtr);
 			t.detach();
 		}
 	}
 };
-
-
-void thread_function(PaStreamParameters * outputParameter, SampleInfo * sampleInfo)
-{
-	PaStream* inStream;
-	paTestData paData;
-
-	paData.frameIndex = 0;
-	paData.recordedSamples = sampleInfo->sample;
-	paData.maxFrameIndex = sampleInfo->maxFrameIndex;
-
-	Pa_OpenStream(
-		&inStream,
-		NULL, /* no input */
-		outputParameter,
-		SAMPLE_RATE,
-		FRAMES_PER_BUFFER,
-		paClipOff,      /* we won't output out of range samples so don't bother clipping them */
-		s_playCallback,
-		&paData);
-
-	if (inStream)
-	{
-		PaError err = paNoError;
-		err = Pa_StartStream(inStream);
-		if (err != paNoError)
-			return;
-
-		printf("Waiting for playback to finish.\n"); fflush(stdout);
-
-		while ((err = Pa_IsStreamActive(inStream)) == 1) {
-			Pa_Sleep(1000);
-			printf("W....\n"); fflush(stdout);
-			Pa_StartStream(inStream);
-		}
-		if (err < 0)
-			return;
-
-		err = Pa_CloseStream(inStream);
-		if (err != paNoError) return;
-
-		printf("Done.\n"); fflush(stdout);
-
-		delete inStream;
-	}
-}

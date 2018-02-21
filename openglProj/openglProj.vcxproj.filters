@@ -111,6 +111,9 @@
     <ClCompile Include="PlayerPlane.cpp">
       <Filter>헤더 파일\game</Filter>
     </ClCompile>
+    <ClCompile Include="ManagerOfManagercpp.cpp">
+      <Filter>헤더 파일\glMain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\glMain\Vertex.h">
@@ -236,10 +239,13 @@
     <ClInclude Include="CollisionManager.h">
       <Filter>소스 파일\glMain</Filter>
     </ClInclude>
-    <ClInclude Include="MangerOfManager.h">
+    <ClInclude Include="PortAudioClass.h">
       <Filter>소스 파일\glMain</Filter>
     </ClInclude>
-    <ClInclude Include="PortAudioClass.h">
+    <ClInclude Include="ManagerOfManager.h">
+      <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="SingletonManager.h">
       <Filter>소스 파일\glMain</Filter>
     </ClInclude>
   </ItemGroup>

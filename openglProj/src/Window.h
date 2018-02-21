@@ -32,7 +32,7 @@ using namespace glm;
 #include <PlayerPlane.h>
 #include <vector>
 #include <algorithm>
-#include <MangerOfManager.h>
+#include <ManagerOfManager.h>
 
 using namespace std;
 
