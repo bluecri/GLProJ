@@ -26,8 +26,11 @@ public:
 	ShaderManager* shaderManager;	//load shader in this func.
 	TextManager* textManager;
 	SkyboxObjManager* skyboxManager;
+	ALManager * alManager;
 
 	CameraObject * mainCameraObjectPtr;
+
+
 	Control * control;
 	
 
@@ -57,6 +60,7 @@ public:
 		shaderManager = new ShaderManager();	//load shader in this func.
 		textManager = new TextManager();
 		skyboxManager = new SkyboxObjManager();
+		alManager = new ALManager();
 	}
 
 	void init(GLFWwindow* window, int width, int height) {
@@ -72,6 +76,8 @@ public:
 
 		textManager->textManagerInit();
 		skyboxManager->bufferInit();
+
+		alManager->init();
 
 	}
 
@@ -112,19 +118,20 @@ public:
 
 		DynamicDrawableObjectWithTexture* tempPlayerPlaneDDOPtr = makeObject("playerObject", "smallShip", "uvMapTexture", glm::vec3(0, 0, 0.1), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), planeCollisionCenterCompensationVec, collisionBox);
 		CollisionProcessInfo * planeCPI = new CollisionProcessInfo(10);
-		PlayerPlane* playerPlanePtr = new PlayerPlane(control, mainCameraObjectPtr, 100, planeCPI, 0.0f, 4.0f, 1.0f, textManager, portAudioManager, (DDOWithCollision*)tempPlayerPlaneDDOPtr, tempDeltaParam);
+		PlayerPlane* playerPlanePtr = new PlayerPlane(control, mainCameraObjectPtr, 100, planeCPI, 0.0f, 4.0f, 1.0f, textManager, (DDOWithCollision*)tempPlayerPlaneDDOPtr, tempDeltaParam);
+		playerPlanePtr->bindLaserSourceToALSound(alManager->getALSoundPtrWithName("laser"));
 		hasCollisionObjList.push_back(playerPlanePtr);
 
 
 		DynamicDrawableObjectWithTexture* tempEnemyPlaneDDOPtr = makeObject("enemyObject", "smallShip", "uvMapTexture", glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), planeCollisionCenterCompensationVec, collisionBox);
-		EnemyPlane* tempEnemyPlanePtr = new EnemyPlane(playerPlanePtr, 100, planeCPI, 0.0f, 3.0f, 1.0f, textManager, portAudioManager, (DDOWithCollision*)tempEnemyPlaneDDOPtr, tempDeltaParam);
+		EnemyPlane* tempEnemyPlanePtr = new EnemyPlane(playerPlanePtr, 100, planeCPI, 0.0f, 3.0f, 1.0f, textManager, (DDOWithCollision*)tempEnemyPlaneDDOPtr, tempDeltaParam);
 		hasCollisionObjList.push_back(tempEnemyPlanePtr);
 
 
 		glm::vec3 missileCollisionCenterCompensationVec(0.0f, 0.0f, 0.0f);
 		float missileCollisionBox[3] = { 0.02f, 0.02f, 0.2f };
 		tempEnemyPlaneDDOPtr = makeObject("missieObj", "missile", "uvMapTexture", glm::vec3(2.0f, 2.0f, 5.0f), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), missileCollisionCenterCompensationVec, missileCollisionBox);
-		tempEnemyPlanePtr = new EnemyPlane(playerPlanePtr, 100, planeCPI, 0.0f, 3.0f, 1.0f, textManager, portAudioManager, (DDOWithCollision*)tempEnemyPlaneDDOPtr, tempDeltaParam);
+		tempEnemyPlanePtr = new EnemyPlane(playerPlanePtr, 100, planeCPI, 0.0f, 3.0f, 1.0f, textManager, (DDOWithCollision*)tempEnemyPlaneDDOPtr, tempDeltaParam);
 		hasCollisionObjList.push_back(tempEnemyPlanePtr);
 
 	}

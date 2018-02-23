@@ -7,51 +7,36 @@
 
 using namespace std;
 
+/*
+ * contain soundBufferID & information of file
+*/
+
 class ALSound {
 public:
-	ALuint soundBufferID;
-	ALuint sourceID;
 	
+	ALuint soundBufferID;
+	std::string m_soundName;
+	std::string fileName;
 	ALvoid	*data = 0;
 	ALsizei size = 0;
 	ALenum format = 0;
 	ALsizei freq = 0;
 	
-	ALSound(ALvoid	*data, ALsizei size, ALenum format, ALsizei freq)
-	: data(data), size(size), format(format), freq(freq){
-		alGenSources(1, &sourceID);
+	ALSound(std::string fileName, ALvoid *data, ALsizei size, ALenum format, ALsizei freq)
+	: data(data), size(size), format(format), freq(freq), fileName(fileName){
+
+	}
+
+	void allocBuffer(std::string soundName) {
 		alGenBuffers(1, &soundBufferID);
-
+		m_soundName = soundName;
 		alBufferData(soundBufferID, format, data, size, freq);
-		alSourcei(sourceID, AL_BUFFER, soundBufferID);
-		//1 listener
-		//1 buffer per file
-		//multiple source with sound origin
-
-		//listener
-		/*
-		alListenerfv(AL_POSITION, ListenerPos);
-		alListenerfv(AL_VELOCITY, ListenerVel);
-		alListenerfv(AL_ORIENTATION, ListenerOri);
-		*/
-		//source
-		/*
-		alSourcei(sourceID, AL_BUFFER, soundBufferID);
-		alSourcef(sourceID, AL_PITCH, 1.0f);
-		alSourcef(sourceID, AL_GAIN, 1.0f);
-		alSourcefv(sourceID, AL_POSITION, SourcePos);
-		alSourcefv(sourceID, AL_POSITION, SourcePos);
-		alSourcei(sourceID, AL_LOOPING, AL_FALSE);
-		*/
-
-		//play
-		alSourcePlay(sourceID);
 
 	}
 
 	virtual ~ALSound() {
 		alDeleteBuffers(1, &soundBufferID);
-		alDeleteSources(1, &sourceID);
+		//alDeleteSources(1, &sourceID);
 
 		delete data;
 	}

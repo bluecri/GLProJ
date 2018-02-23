@@ -4,29 +4,40 @@
 #include <alc.h>
 #include <ALSound.h>
 #include <iostream>
+#include <vector>
 #include <stdio.h>
 
 using namespace std;
 
 class ALManager {
-public:
-	ALCdevice	*alcDevice;
+private:
+	ALCdevice * alcDevice;
 	ALCcontext	*alCcontext;
+	std::map<std::string, ALSound*> m_nameToALSound;
 
-	void init() {
-		alcDevice = alcOpenDevice(NULL);
-		if (alcDevice) {
-			alCcontext = alcCreateContext(alcDevice, NULL);
-			alcMakeContextCurrent(alCcontext);
+	void loadAllWaveFile() {
+		std::vector<std::pair<std::string, std::string>> listWaveFiles;
+		listWaveFiles.push_back(std::make_pair("laser", "sound/spring.wav"));
+		//listWaveFiles.push_back(std::make_pair("laser", "sound/spring.wav"));
+		//listWaveFiles.push_back(std::make_pair("laser", "sound/spring.wav"));
+
+		for (std::vector<std::pair<std::string, std::string>>::iterator it = listWaveFiles.begin(); it != listWaveFiles.end(); ++it) {
+			loadWaveFileToMap(it->first, it->second);
 		}
+
 	}
-	
+
+	void loadWaveFileToMap(std::string soundName, std::string soundFileName) {
+		ALSound *alSound = loadWAVE(soundFileName.c_str());
+		alSound->allocBuffer(soundName);
+		m_nameToALSound.insert(std::make_pair(soundName, alSound));
+	}
 
 	//reference : https://www.gamedev.net/forums/topic/645923-loading-wav-file-with-openal-incorrect-audioformat/
 	ALSound* loadWAVE(const char* filename) {
 		FILE* fp = NULL;
 
-		fp = fopen(filename, "r");
+		fp = fopen(filename, "rb");
 		if (!fp) {
 			cout << "Could NOT open: " << filename << "!" << endl;
 			fclose(fp);
@@ -36,7 +47,7 @@ public:
 		char* ChunkID = new char[4];
 		fread(ChunkID, sizeof(char), 4, fp);
 
-		if (strcmp(ChunkID, "RIFF")) {
+		if (strncmp(ChunkID, "RIFF", 4)) {
 			delete[] ChunkID;
 			cout << "Not RIFF!" << endl;
 			fclose(fp);
@@ -47,7 +58,7 @@ public:
 		char* Format = new char[4];
 		fread(Format, 4, sizeof(char), fp);
 
-		if (strcmp(Format, "WAVE")) {
+		if (strncmp(Format, "WAVE", 4)) {
 			delete[] ChunkID;
 			delete[] Format;
 			cout << "Not WAVE!" << endl;
@@ -58,7 +69,7 @@ public:
 		char* SubChunk1ID = new char[4];
 		fread(SubChunk1ID, 4, sizeof(char), fp);
 
-		if (strcmp(SubChunk1ID, "fmt ")) {
+		if (strncmp(SubChunk1ID, "fmt ", 3)) {
 			delete[] ChunkID;
 			delete[] Format;
 			delete[] SubChunk1ID;
@@ -123,7 +134,7 @@ public:
 		char* SubChunk2ID = new char[4];
 		fread(SubChunk2ID, 4, sizeof(char), fp);
 
-		if (strcmp(SubChunk2ID, "data")) {
+		if (strncmp(SubChunk2ID, "data", 4)) {
 			delete[] ChunkID;
 			delete[] Format;
 			delete[] SubChunk1ID;
@@ -145,27 +156,35 @@ public:
 		delete[] SubChunk2ID;
 		fclose(fp);
 
-		return new ALSound(Data, SubChunk2Size, ALFormat, SampleRate);
+		return new ALSound(filename, Data, SubChunk2Size, ALFormat, SampleRate);
 
 	}
+public:
+	void init() {
+		alcDevice = alcOpenDevice(NULL);
+		if (alcDevice) {
+			alCcontext = alcCreateContext(alcDevice, NULL);
+			alcMakeContextCurrent(alCcontext);
+		}
+		loadAllWaveFile();
+	}
 
-	void text() {
-		ALuint soundBufferID;
-		alGenBuffers(1, &soundBufferID);
-		ALenum format = 0;
-		ALvoid	*data = 0;
-		ALsizei size = 0;
-		ALsizei freq = 0;
-
-		loadWAVFile("test.wav", &format, &data, &size, &freq, &loop);
-		alBufferData(soundBufferID, format, data, size, freq);
-
-		ALuint sourceID;
-		alGenSources(1, &sourceID);
+	
+	ALSound* getALSoundPtrWithName(std::string soundName) {
+		std::map<std::string, ALSound*>::iterator it = m_nameToALSound.find(soundName);
+		if (it != m_nameToALSound.end()) {
+			return it->second;
+		}
+		else {
+			printf("error in getALSoundPtrWithName\n");
+			return NULL;
+		}
 		
+	}
+
+	virtual ~ALManager() {
 		alcMakeContextCurrent(NULL);
 		alcDestroyContext(alCcontext);
 		alcCloseDevice(alcDevice);
 	}
-	
 };

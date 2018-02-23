@@ -14,12 +14,11 @@ public:
 	int m_hp;
 	float m_speed, m_maxSpeed, m_acc;
 	TextManager* m_textManagerPtr;
-	PortAudioClass * m_portAudioManagerPtr;
-
+	
 	PlaneDeltaParam m_planeDeltaParam;
 
-	Plane(int hp, CollisionProcessInfo * cpi, float speed, float maxSpeed, float acc, TextManager* textManagerPtr, PortAudioClass * portAudioManagerPtr, DDOWithCollision * ddoWithCollision, PlaneDeltaParam planeDeltaParam)
-		: m_hp(hp), m_speed(speed), m_portAudioManagerPtr(portAudioManagerPtr), m_textManagerPtr(textManagerPtr), HasCollisionObj(ddoWithCollision, cpi), m_planeDeltaParam(planeDeltaParam), m_acc(acc), m_maxSpeed(maxSpeed){
+	Plane(int hp, CollisionProcessInfo * cpi, float speed, float maxSpeed, float acc, TextManager* textManagerPtr, DDOWithCollision * ddoWithCollision, PlaneDeltaParam planeDeltaParam)
+		: m_hp(hp), m_speed(speed), m_textManagerPtr(textManagerPtr), HasCollisionObj(ddoWithCollision, cpi), m_planeDeltaParam(planeDeltaParam), m_acc(acc), m_maxSpeed(maxSpeed){
 
 	}
 

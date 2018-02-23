@@ -3,6 +3,8 @@
 #include <src/glMain/TextManager.h>
 #include <src\glMain\Control.h>
 #include <PlaneDeltaParam.h>
+#include <ALListener.h>
+#include <ALSource.h>
 #include <CollisionProcessInfo.h>
 
 class PlayerPlane : public Plane {
@@ -12,6 +14,9 @@ public:
 	float shotDelayTime = 0.3f;
 	float lastShotTime = 0.0f;
 
+	ALListener * alListener;
+
+	ALSource * alLaserSource;
 
 	enum EnumCameraMode
 	{
@@ -24,8 +29,14 @@ public:
 	float cameraLookDelta[CAMERA_MODE_LEN] = { 10.0f, 0.8f, 1.5f, -2.0f };
 
 
-	PlayerPlane(Control* control, CameraObject * mainCamera, int hp, CollisionProcessInfo * cpi, float speed, float maxSpeed, float acc, TextManager* textManagerPtr, PortAudioClass* portAudioManagerPtr, DDOWithCollision * ddoWithCollision, PlaneDeltaParam planeDeltaParam)
-		:  Plane(hp, cpi, speed, maxSpeed, acc, textManagerPtr, portAudioManagerPtr, ddoWithCollision, planeDeltaParam), m_control(control), m_mainCamera(mainCamera){
+	PlayerPlane(Control* control, CameraObject * mainCamera, int hp, CollisionProcessInfo * cpi, float speed, float maxSpeed, float acc, TextManager* textManagerPtr, DDOWithCollision * ddoWithCollision, PlaneDeltaParam planeDeltaParam)
+		:  Plane(hp, cpi, speed, maxSpeed, acc, textManagerPtr, ddoWithCollision, planeDeltaParam), m_control(control), m_mainCamera(mainCamera){
+		alListener = new ALListener();
+		alLaserSource = new ALSource();
+	}
+
+	void bindLaserSourceToALSound(ALSound *alSound) {
+		alLaserSource->bindSourceToALSound(alSound);
 	}
 
 	virtual void collisionOccur(CollisionProcessInfo * anotherCpi) override{
@@ -122,7 +133,7 @@ public:
 
 	virtual void shot() override {
 		if (m_control->s_curTime - lastShotTime > shotDelayTime) {
-			m_portAudioManagerPtr->playSound("laserSound");
+			alLaserSource->sourcePlay();
 			lastShotTime = m_control->s_curTime;
 		}
 		
@@ -132,6 +143,10 @@ public:
 
 	virtual void destoryPlane() override {
 		Plane::destoryPlane();
+	}
+
+	virtual ~PlayerPlane() {
+		delete alLaserSource;
 	}
 
 	

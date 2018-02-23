@@ -239,13 +239,22 @@
     <ClInclude Include="CollisionManager.h">
       <Filter>소스 파일\glMain</Filter>
     </ClInclude>
-    <ClInclude Include="PortAudioClass.h">
-      <Filter>소스 파일\glMain</Filter>
-    </ClInclude>
     <ClInclude Include="ManagerOfManager.h">
       <Filter>소스 파일\glMain</Filter>
     </ClInclude>
     <ClInclude Include="SingletonManager.h">
+      <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="ALManager.h">
+      <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="ALSound.h">
+      <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="ALSource.h">
+      <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="ALListener.h">
       <Filter>소스 파일\glMain</Filter>
     </ClInclude>
   </ItemGroup>

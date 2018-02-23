@@ -10,8 +10,15 @@ class EnemyPlane : public Plane {
 public:
 	PlayerPlane * playerPlanePtr;
 
-	EnemyPlane(PlayerPlane * playerPlanePtr, int hp, CollisionProcessInfo* cpi, float speed, float maxSpeed, float acc, TextManager* textManagerPtr, PortAudioClass* portAudioManagerPtr, DDOWithCollision * ddoWithCollision, PlaneDeltaParam planeDeltaParam)
-		: Plane(hp, cpi, speed, maxSpeed, acc, textManagerPtr, portAudioManagerPtr, ddoWithCollision, planeDeltaParam), playerPlanePtr(playerPlanePtr) {
+	ALSource * alLaserSource;
+
+	EnemyPlane(PlayerPlane * playerPlanePtr, int hp, CollisionProcessInfo* cpi, float speed, float maxSpeed, float acc, TextManager* textManagerPtr, DDOWithCollision * ddoWithCollision, PlaneDeltaParam planeDeltaParam)
+		: Plane(hp, cpi, speed, maxSpeed, acc, textManagerPtr, ddoWithCollision, planeDeltaParam), playerPlanePtr(playerPlanePtr) {
+		alLaserSource = new ALSource();
+	}
+
+	void bindLaserSourceToALSound(ALSound *alSound) {
+		alLaserSource->bindSourceToALSound(alSound);
 	}
 
 	virtual void update(float deltaTime) override {
@@ -44,5 +51,8 @@ public:
 		Plane::destoryPlane();
 	}
 
+	virtual ~EnemyPlane() {
+		delete alLaserSource;
+	}
 
 };
