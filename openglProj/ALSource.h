@@ -24,6 +24,27 @@ public:
 		alSourcef(m_sourceID, AL_GAIN, m_gain);
 		alSourcefv(m_sourceID, AL_POSITION, m_sourcePos);
 		alSourcei(m_sourceID, AL_LOOPING, m_isLoop);
+		alSourcei(m_sourceID, AL_MAX_DISTANCE, 10.0f);
+		alSourcei(m_sourceID, AL_REFERENCE_DISTANCE, 1.0);
+		
+	}
+
+	ALSource(float pitch, float gain) {
+		alGenSources(1, &m_sourceID);
+		m_pitch = pitch;
+		m_gain = gain;
+		for (int i = 0; i < 3; i++) {
+			m_sourcePos[i] = 0.0f;
+		}
+		m_isLoop = AL_FALSE;
+
+		alSourcef(m_sourceID, AL_PITCH, m_pitch);
+		alSourcef(m_sourceID, AL_GAIN, m_gain);
+		alSourcefv(m_sourceID, AL_POSITION, m_sourcePos);
+		alSourcei(m_sourceID, AL_LOOPING, m_isLoop);
+		alSourcei(m_sourceID, AL_MAX_DISTANCE, 10.0f);
+		alSourcei(m_sourceID, AL_REFERENCE_DISTANCE, 1.0);
+
 	}
 	void initSource(ALuint soundBufferID) {
 		bindSourceToBuffer(soundBufferID);
@@ -34,6 +55,13 @@ public:
 	}
 	void bindSourceToALSound(ALSound *alSound) {
 		alSourcei(m_sourceID, AL_BUFFER, alSound->soundBufferID);
+	}
+
+	void modifyPos(glm::vec3 pos) {
+		for (int i = 0; i < 3; i++) {
+			m_sourcePos[i] = pos[i];
+		}
+		alSourcefv(m_sourceID, AL_POSITION, m_sourcePos);
 	}
 
 	void sourcePlay() {

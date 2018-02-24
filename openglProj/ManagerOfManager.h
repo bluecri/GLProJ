@@ -16,10 +16,13 @@
 #include <HasCollisionObj.h>
 #include <SingletonManager.h>
 
+#include <LaserBullet.h>
+#include <ManagerOfManagerObserver.h>
+
 #include <windows.h>
 #include <ALManager.h>
 
-class ManagerOfManager {
+class ManagerOfManager : ManagerOfManagerObserver{
 public:
 	OpenglResourceManager * openglResourceManager;
 	BufferManager* bufferManager;
@@ -32,10 +35,10 @@ public:
 
 
 	Control * control;
-	
+
 
 	//PortAudioClass * portAudioManage
-	
+
 	//object storage
 	std::vector<std::vector<std::list<DrawableObjectWithTexture*>>> objectStorage;
 	std::vector<std::vector<std::vector<DrawableObjectWithTexture*>>> deleteStorage;
@@ -53,6 +56,15 @@ public:
 	glm::mat4 ProjectionMatrix;
 	glm::mat4 ViewMatrix;	//look at
 	glm::mat4 ModelMatrixSkybox;
+
+	float collisionBox[3] = { 0.6f, 0.2f, 0.4f };
+	float missileCollisionBox[3] = { 0.02f, 0.02f, 0.2f };
+	glm::vec3 planeCollisionCenterCompensationVec;
+	PlaneDeltaParam* deltaParamPtr;
+	CollisionProcessInfo * planeCPI;
+	glm::vec3 missileCollisionCenterCompensationVec;
+	
+	PlayerPlane * playerPlanePtr;
 
 	ManagerOfManager() {
 		openglResourceManager = new OpenglResourceManager();
@@ -78,6 +90,13 @@ public:
 		skyboxManager->bufferInit();
 
 		alManager->init();
+
+		//const
+		planeCPI = new CollisionProcessInfo(10);
+		planeCollisionCenterCompensationVec = glm::vec3(0.0f, 0.0f, 0.5f);
+		missileCollisionCenterCompensationVec = glm::vec3(0.0f, 0.0f, 0.0f);
+		float missileCollisionBox[3] = { 0.02f, 0.02f, 0.2f };
+		deltaParamPtr = new PlaneDeltaParam(0, 0, 0, 0.1, 0.8, 0.1, 0.1, 0.8, 0.1, 0.05, 0.05, 0.05);
 
 	}
 
@@ -112,27 +131,32 @@ public:
 	void makeGameObjects() {
 		//make game object
 		//float collisionBox[3] = { 1.3f, 0.3f, 1.0f };
-		float collisionBox[3] = { 0.6f, 0.2f, 0.4f };
-		glm::vec3 planeCollisionCenterCompensationVec(0.0f, 0.0f, 0.5f);
-		PlaneDeltaParam tempDeltaParam(0, 0, 0, 0.1, 0.8, 0.1, 0.1, 0.8, 0.1, 0.05, 0.05, 0.05);
 
 		DynamicDrawableObjectWithTexture* tempPlayerPlaneDDOPtr = makeObject("playerObject", "smallShip", "uvMapTexture", glm::vec3(0, 0, 0.1), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), planeCollisionCenterCompensationVec, collisionBox);
-		CollisionProcessInfo * planeCPI = new CollisionProcessInfo(10);
-		PlayerPlane* playerPlanePtr = new PlayerPlane(control, mainCameraObjectPtr, 100, planeCPI, 0.0f, 4.0f, 1.0f, textManager, (DDOWithCollision*)tempPlayerPlaneDDOPtr, tempDeltaParam);
+		
+		playerPlanePtr = new PlayerPlane(control, mainCameraObjectPtr, 100, planeCPI, 0.0f, 4.0f, 1.0f, textManager, (DDOWithCollision*)tempPlayerPlaneDDOPtr, *deltaParamPtr);
 		playerPlanePtr->bindLaserSourceToALSound(alManager->getALSoundPtrWithName("laser"));
+		playerPlanePtr->bindHitSourceToALSound(alManager->getALSoundPtrWithName("hit"));
+		playerPlanePtr->bindExplosionSourceToALSound(alManager->getALSoundPtrWithName("explosion"));
+		playerPlanePtr->registerObserver(this);
 		hasCollisionObjList.push_back(playerPlanePtr);
 
 
 		DynamicDrawableObjectWithTexture* tempEnemyPlaneDDOPtr = makeObject("enemyObject", "smallShip", "uvMapTexture", glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), planeCollisionCenterCompensationVec, collisionBox);
-		EnemyPlane* tempEnemyPlanePtr = new EnemyPlane(playerPlanePtr, 100, planeCPI, 0.0f, 3.0f, 1.0f, textManager, (DDOWithCollision*)tempEnemyPlaneDDOPtr, tempDeltaParam);
+		EnemyPlane* tempEnemyPlanePtr = new EnemyPlane(control, playerPlanePtr, 100, planeCPI, 0.0f, 3.0f, 1.0f, textManager, (DDOWithCollision*)tempEnemyPlaneDDOPtr, *deltaParamPtr);
+		tempEnemyPlanePtr->bindLaserSourceToALSound(alManager->getALSoundPtrWithName("laser"));
+		tempEnemyPlanePtr->bindHitSourceToALSound(alManager->getALSoundPtrWithName("hit"));
+		tempEnemyPlanePtr->bindExplosionSourceToALSound(alManager->getALSoundPtrWithName("explosion"));
+		tempEnemyPlanePtr->registerObserver(this);
 		hasCollisionObjList.push_back(tempEnemyPlanePtr);
 
 
-		glm::vec3 missileCollisionCenterCompensationVec(0.0f, 0.0f, 0.0f);
-		float missileCollisionBox[3] = { 0.02f, 0.02f, 0.2f };
-		tempEnemyPlaneDDOPtr = makeObject("missieObj", "missile", "uvMapTexture", glm::vec3(2.0f, 2.0f, 5.0f), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), missileCollisionCenterCompensationVec, missileCollisionBox);
-		tempEnemyPlanePtr = new EnemyPlane(playerPlanePtr, 100, planeCPI, 0.0f, 3.0f, 1.0f, textManager, (DDOWithCollision*)tempEnemyPlaneDDOPtr, tempDeltaParam);
-		hasCollisionObjList.push_back(tempEnemyPlanePtr);
+		LaserBullet * tempLaserBullet;
+		
+		tempEnemyPlaneDDOPtr = makeObject("missieObj1", "missile", "uvMapTexture", glm::vec3(2.0f, 2.0f, 5.0f), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), missileCollisionCenterCompensationVec, missileCollisionBox);
+		tempLaserBullet = new LaserBullet(control, playerPlanePtr, 100, planeCPI, 10.0f, 10.0f, 1.0f, textManager, (DDOWithCollision*)tempEnemyPlaneDDOPtr, *deltaParamPtr);
+		tempLaserBullet->registerObserver(this);
+		hasCollisionObjList.push_back(tempLaserBullet);
 
 	}
 
@@ -161,12 +185,15 @@ public:
 	void updateGameObject() {
 		float deltaTimeInLoop = control->m_deltaTime;
 
-		for (std::list<HasCollisionObj*>::iterator it = hasCollisionObjList.begin(); it != hasCollisionObjList.end(); ++it) {
+		for (std::list<HasCollisionObj*>::iterator it = hasCollisionObjList.begin(); it != hasCollisionObjList.end();) {
 			(*it)->update(deltaTimeInLoop);			//update() all obj
 			if ((*it)->isCollisionObjDelete) {
 				(*it)->m_ddoWithCollision->isDrawableObjDelete = true;	//check one more time.
 				delete *it;
 				it = hasCollisionObjList.erase(it);		//remove collision obj
+			}
+			else {
+				++it;
 			}
 		}
 	}
@@ -190,11 +217,13 @@ public:
 		for (size_t i = 0; i < objectStorage.size(); i++) {
 			for (size_t k = 0; k < objectStorage[i].size(); k++) {
 				glBindVertexArray(bufferManager->vertexArrayObjectIDVec[k]);
-				for (std::list<DrawableObjectWithTexture*>::iterator it = objectStorage[i][k].begin(); it != objectStorage[i][k].end(); ++it) {
+				for (std::list<DrawableObjectWithTexture*>::iterator it = objectStorage[i][k].begin(); it != objectStorage[i][k].end();) {
 					if ((*it)->isDrawableObjDelete) {
 						//erase
+						DrawableObjectWithTexture* deleteDrawableObjectWithTexture = (*it);
 						m_NameToDrawingObjectMap.erase((*it)->name);
 						it = objectStorage[i][k].erase(it);
+						delete deleteDrawableObjectWithTexture;
 					}
 					else {
 						//draw
@@ -208,6 +237,7 @@ public:
 							GL_UNSIGNED_SHORT,   // type
 							(void*)bufferManager->elementOffset[k]         // element array buffer offset
 						);
+						++it;
 					}
 				}
 				glBindVertexArray(0);
@@ -405,5 +435,36 @@ public:
 		return newGameObj;
 
 	}
+	DynamicDrawableObjectWithTexture* makeObject(std::string objName, std::string vertexObjectName, std::string textureName, glm::vec3 modelVec, glm::mat4 rotMat, glm::vec3 scaleVec, glm::vec3 compenVec, float axisLen[3]) {
+		int textureIndex = openglResourceManager->getBLTIndexWithName(textureName);
+		int objectIndex = openglResourceManager->getBLVWTIndexWithName(vertexObjectName);
+
+		DynamicDrawableObjectWithTexture* newGameObj = new DDOWithCollision(objName, objectStorage[textureIndex][objectIndex].size(), textureIndex, objectIndex, modelVec, rotMat, scaleVec, compenVec, axisLen, false);
+		m_NameToDrawingObjectMap.insert(std::make_pair(objName, newGameObj));
+		objectStorage[textureIndex][objectIndex].push_back(newGameObj);
+		return newGameObj;
+
+	}
 	
+	virtual void bulletFire(glm::vec3 pos, glm::mat4 rotMat) override {
+		LaserBullet * tempLaserBullet;
+		DDOWithCollision *tempDDOPtr = (DDOWithCollision*)makeObject("missieObj10", "missile", "uvMapTexture", pos, rotMat, glm::vec3(0.2, 0.2, 0.2), missileCollisionCenterCompensationVec, missileCollisionBox);
+		tempLaserBullet = new LaserBullet(control, playerPlanePtr, 100, planeCPI, 10.0f, 10.0f, 1.0f, textManager, tempDDOPtr, *deltaParamPtr);
+		hasCollisionObjList.push_back(tempLaserBullet);
+	}
+
+	//delete progress
+	/*
+	(*it)->update(deltaTimeInLoop);			//update() all obj
+	update후 isCollisionObjDelete가 true인 경우 delete 진행
+	if ((*it)->isCollisionObjDelete) {
+		(*it)->m_ddoWithCollision->isDrawableObjDelete = true;	//check one more time.
+		delete *it;
+		it = hasCollisionObjList.erase(it);		//remove collision obj
+	}
+
+	delete (*it);
+	m_NameToDrawingObjectMap.erase((*it)->name);
+	it = objectStorage[i][k].erase(it);
+	*/
 };

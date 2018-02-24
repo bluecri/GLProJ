@@ -14,9 +14,10 @@ class DDOWithCollision : public DynamicDrawableObjectWithTexture {
 		OBBClass pro_obbClass;
 		DDOWithCollision(std::string name, int arrIdx, int textureIdx, int vertexIdx, glm::vec3 modlevec, glm::vec3 angleVec, glm::vec3 scaleVec, glm::vec3 compenVec, float obbLen[3], bool isStatic)
 			: DynamicDrawableObjectWithTexture(name, arrIdx, textureIdx, vertexIdx, modlevec, angleVec, scaleVec, isStatic), pro_obbClass(compenVec, obbLen){
-			
 		}
-
+		DDOWithCollision(std::string name, int arrIdx, int textureIdx, int vertexIdx, glm::vec3 modlevec, glm::mat4 rotMat, glm::vec3 scaleVec, glm::vec3 compenVec, float obbLen[3], bool isStatic)
+			: DynamicDrawableObjectWithTexture(name, arrIdx, textureIdx, vertexIdx, modlevec, rotMat, scaleVec, isStatic), pro_obbClass(compenVec, obbLen) {
+		}
 		virtual OBBClass* getObbClassPtr() override {
 			return &pro_obbClass;
 		}

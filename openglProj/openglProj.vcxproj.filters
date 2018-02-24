@@ -257,6 +257,15 @@
     <ClInclude Include="ALListener.h">
       <Filter>소스 파일\glMain</Filter>
     </ClInclude>
+    <ClInclude Include="LaserBullet.h">
+      <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="ManagerOfManagerObserver.h">
+      <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="ManagerOfManagerObservee.h">
+      <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\DepthRTT.fragmentshader">

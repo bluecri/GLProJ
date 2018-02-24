@@ -53,4 +53,6 @@ public:
 	bool isStatic() {
 		return m_isStatic;
 	}
+
+	virtual ~DrawableObjectWithTexture() {}
 };

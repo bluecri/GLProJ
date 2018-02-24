@@ -91,7 +91,10 @@
     <ClInclude Include="DmgPrintUI.h" />
     <ClInclude Include="EnemyPlane.h" />
     <ClInclude Include="HasCollisionObj.h" />
+    <ClInclude Include="LaserBullet.h" />
     <ClInclude Include="ManagerOfManager.h" />
+    <ClInclude Include="ManagerOfManagerObservee.h" />
+    <ClInclude Include="ManagerOfManagerObserver.h" />
     <ClInclude Include="OBBStruct.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="PlaneDeltaParam.h" />

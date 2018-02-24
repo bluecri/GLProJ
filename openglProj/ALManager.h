@@ -17,9 +17,9 @@ private:
 
 	void loadAllWaveFile() {
 		std::vector<std::pair<std::string, std::string>> listWaveFiles;
-		listWaveFiles.push_back(std::make_pair("laser", "sound/spring.wav"));
-		//listWaveFiles.push_back(std::make_pair("laser", "sound/spring.wav"));
-		//listWaveFiles.push_back(std::make_pair("laser", "sound/spring.wav"));
+		listWaveFiles.push_back(std::make_pair("laser", "sound/springMono.wav"));
+		listWaveFiles.push_back(std::make_pair("hit", "sound/hitMono.wav"));
+		listWaveFiles.push_back(std::make_pair("explosion", "sound/explosion.wav"));
 
 		for (std::vector<std::pair<std::string, std::string>>::iterator it = listWaveFiles.begin(); it != listWaveFiles.end(); ++it) {
 			loadWaveFileToMap(it->first, it->second);
@@ -166,6 +166,8 @@ public:
 			alCcontext = alcCreateContext(alcDevice, NULL);
 			alcMakeContextCurrent(alCcontext);
 		}
+		//al mode
+		alDistanceModel(AL_EXPONENT_DISTANCE_CLAMPED);
 		loadAllWaveFile();
 	}
 

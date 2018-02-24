@@ -6,6 +6,7 @@
 #include <ALListener.h>
 #include <ALSource.h>
 #include <CollisionProcessInfo.h>
+#include <ManagerOfManagerObservee.h>
 
 class PlayerPlane : public Plane {
 public:
@@ -17,6 +18,8 @@ public:
 	ALListener * alListener;
 
 	ALSource * alLaserSource;
+	ALSource * alHitSource;
+	ALSource * alExplosionSource;
 
 	enum EnumCameraMode
 	{
@@ -32,16 +35,28 @@ public:
 	PlayerPlane(Control* control, CameraObject * mainCamera, int hp, CollisionProcessInfo * cpi, float speed, float maxSpeed, float acc, TextManager* textManagerPtr, DDOWithCollision * ddoWithCollision, PlaneDeltaParam planeDeltaParam)
 		:  Plane(hp, cpi, speed, maxSpeed, acc, textManagerPtr, ddoWithCollision, planeDeltaParam), m_control(control), m_mainCamera(mainCamera){
 		alListener = new ALListener();
+		alListener->modifyPos(3.0f, 0.0f, 0.0f);
 		alLaserSource = new ALSource();
+		alHitSource = new ALSource(1.0f, 0.3f);
+		alExplosionSource = new ALSource();
+		
 	}
+
 
 	void bindLaserSourceToALSound(ALSound *alSound) {
 		alLaserSource->bindSourceToALSound(alSound);
 	}
+	void bindHitSourceToALSound(ALSound *alSound) {
+		alHitSource->bindSourceToALSound(alSound);
+	}
+	void bindExplosionSourceToALSound(ALSound *alSound) {
+		alExplosionSource->bindSourceToALSound(alSound);
+	}
 
 	virtual void collisionOccur(CollisionProcessInfo * anotherCpi) override{
 		//collision process with anotherCpi
-		printf("collision!\n");
+		alHitSource->sourcePlay();
+		m_hp -= anotherCpi->m_dmg;
 	}
 
 	virtual void update(float deltaTime) override {
@@ -96,6 +111,15 @@ public:
 		m_planeDeltaParam.yaw = 0;
 		m_planeDeltaParam.pitch = 0;
 		m_planeDeltaParam.roll = 0;
+
+		//listener position/orientation update
+		alListener->modifyPos(m_ddoWithCollision->modelVec);
+		alListener->modifyOrientationWithRotationMatrix(m_ddoWithCollision->getRotationMatrix());
+		alLaserSource->modifyPos(m_ddoWithCollision->modelVec + glm::vec3(m_ddoWithCollision->getRotationMatrix() * glm::vec4(0.0f, 0.0f, 0.3f, 0.0f)));
+
+		if (m_hp <= 0) {
+			isCollisionObjDelete = true;
+		}
 	}
 	void cameraUpdate() {
 		//m_ddoWithCollision
@@ -134,6 +158,7 @@ public:
 	virtual void shot() override {
 		if (m_control->s_curTime - lastShotTime > shotDelayTime) {
 			alLaserSource->sourcePlay();
+			observee->notifyBulletFire(m_ddoWithCollision->modelVec + glm::vec3(m_ddoWithCollision->getRotationMatrix() * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f)), m_ddoWithCollision->getRotationMatrix());
 			lastShotTime = m_control->s_curTime;
 		}
 		

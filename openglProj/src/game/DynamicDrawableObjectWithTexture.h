@@ -28,6 +28,23 @@ public:
 
 		m_quat = glm::quat(angleVec);	//Euler angle to quat
 		m_rotateMatrix = glm::toMat4(m_quat);
+		
+
+		m_scaleMatrix = glm::scale(glm::mat4(), scaleVec);
+
+		m_retMatrix = m_modelMatrix * m_rotateMatrix * m_scaleMatrix;
+
+		needUpdateRotateMatrix = false;
+		needUpdateRetMatrix = false;
+		needUpdateQuat = false;
+	}
+
+	DynamicDrawableObjectWithTexture(std::string name, int arrIdx, int textureidx, int vertexIdx, glm::vec3 modelVec, glm::mat4 rotMat, glm::vec3 scaleVec, bool isStatic) : DrawableObjectWithTexture(name, arrIdx, textureidx, vertexIdx, modelVec, isStatic) {
+		m_modelMatrix = glm::translate(glm::mat4(), modelVec);
+
+		m_rotateMatrix = rotMat;
+		m_quat = glm::quat_cast(m_rotateMatrix);
+
 
 		m_scaleMatrix = glm::scale(glm::mat4(), scaleVec);
 

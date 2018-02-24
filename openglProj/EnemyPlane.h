@@ -8,18 +8,38 @@
 
 class EnemyPlane : public Plane {
 public:
-	PlayerPlane * playerPlanePtr;
-
+	PlayerPlane * m_playerPlanePtr;	//for AI
+	Control * m_control;
+	float shotDelayTime = 0.3f;
+	float lastShotTime = 0.0f;
 	ALSource * alLaserSource;
+	ALSource * alHitSource;
+	ALSource * alExplosionSource;
 
-	EnemyPlane(PlayerPlane * playerPlanePtr, int hp, CollisionProcessInfo* cpi, float speed, float maxSpeed, float acc, TextManager* textManagerPtr, DDOWithCollision * ddoWithCollision, PlaneDeltaParam planeDeltaParam)
-		: Plane(hp, cpi, speed, maxSpeed, acc, textManagerPtr, ddoWithCollision, planeDeltaParam), playerPlanePtr(playerPlanePtr) {
+
+	EnemyPlane(Control * control, PlayerPlane * playerPlanePtr, int hp, CollisionProcessInfo* cpi, float speed, float maxSpeed, float acc, TextManager* textManagerPtr, DDOWithCollision * ddoWithCollision, PlaneDeltaParam planeDeltaParam)
+		: Plane(hp, cpi, speed, maxSpeed, acc, textManagerPtr, ddoWithCollision, planeDeltaParam), m_playerPlanePtr(playerPlanePtr), m_control(control) {
 		alLaserSource = new ALSource();
+		alHitSource = new ALSource(1.0f, 0.3f);
+		alExplosionSource = new ALSource();
 	}
 
 	void bindLaserSourceToALSound(ALSound *alSound) {
 		alLaserSource->bindSourceToALSound(alSound);
 	}
+	void bindHitSourceToALSound(ALSound *alSound) {
+		alHitSource->bindSourceToALSound(alSound);
+	}
+	void bindExplosionSourceToALSound(ALSound *alSound) {
+		alExplosionSource->bindSourceToALSound(alSound);
+	}
+
+	virtual void collisionOccur(CollisionProcessInfo * anotherCpi) override {
+		//collision process with anotherCpi
+		alHitSource->sourcePlay();
+		m_hp -= anotherCpi->m_dmg;
+	}
+
 
 	virtual void update(float deltaTime) override {
 		//input progress
@@ -36,6 +56,12 @@ public:
 		*/
 
 		move(deltaTime);
+
+		alLaserSource->modifyPos(m_ddoWithCollision->modelVec + glm::vec3(m_ddoWithCollision->getRotationMatrix() * glm::vec4(0.0f, 0.0f, 0.3f, 0.0f)));
+
+		if (m_hp <= 0) {
+			isCollisionObjDelete = true;
+		}
 	}
 
 	virtual void move(float deltaTime) override {
@@ -43,6 +69,10 @@ public:
 	}
 
 	virtual void shot() override {
+		if (m_control->s_curTime - lastShotTime > shotDelayTime) {
+			alLaserSource->sourcePlay();
+			lastShotTime = m_control->s_curTime;
+		}
 		Plane::shot();
 	}
 
