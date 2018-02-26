@@ -10,7 +10,8 @@ class DrawableObject : public Object{
 	public:
 		//glm::mat4 modelMatrix;
 		glm::vec3 modelVec;
-		bool isDrawableObjDelete = false;
+		bool isDrawableObjDelete = false;	//will be deleted
+		bool isDrawableObjDraw = true;	//draw or not
 		DrawableObject() : Object(), modelVec(0.0f, 0.0f, 0.0f) {
 			
 		}

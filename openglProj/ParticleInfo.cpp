@@ -1,4 +1,6 @@
 #include <ParticleInfo.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/random.hpp>
 
 Particle& ParticleInfo::createNewParticle(Particle &refP) {
 	refP.life = particleLife;
@@ -9,14 +11,14 @@ Particle& ParticleInfo::createNewParticle(Particle &refP) {
 		(rand() % 2000 - 1000.0f) / 1000.0f,
 		(rand() % 2000 - 1000.0f) / 1000.0f
 	);
-	refP.speed = maindir + randomdir * spread;
+	refP.speed = mainDir + randomdir * spread;
 
-	refP.r = rand() % 256;
-	refP.g = rand() % 256;
-	refP.b = rand() % 256;
-	refP.a = (rand() % 256) / 3;
-
-	refP.size = (rand() % 1000) / 2000.0f + 0.3f;
+	
+	for (int i = 0; i < 4; i++) {
+		refP.color[i] = (unsigned char)(m_colorStartRange[i] > m_colorEndRange[i]) ? glm::linearRand(m_colorEndRange[i], m_colorStartRange[i]) : glm::linearRand(m_colorStartRange[i], m_colorEndRange[i]);
+	}
+	
+	refP.size = glm::linearRand(particleSizeStartRange, particleSizeEndRange);
 
 	refP.particleInfoPtr = (this);
 
@@ -30,11 +32,8 @@ void ParticleInfo::preProcessBeforeUpdate(float deltaTime, glm::vec3 cameraPos) 
 void ParticleInfo::updateParticle(Particle *p) {
 	m_cameraPos;
 	// Simulate simple physics : gravity only, no collisions
-	p->speed += glm::vec3(0.0f, -0.0981f, 0.0f) * (float)m_deltaTime * 0.5f;
 	p->pos += p->speed * (float)m_deltaTime;
-
 	p->cameradistance = glm::length(p->pos - m_cameraPos);
-	p->pos += glm::vec3(0.0f, 10.0f, 0.0f) * (float)m_deltaTime;
-
+	
 	return;
 }

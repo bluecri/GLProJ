@@ -6,7 +6,7 @@ class ParticleInfo;
 //reference : opengl tutorial
 struct Particle {
 	glm::vec3 pos, speed;
-	unsigned char r, g, b, a; // Color
+	unsigned char color[4]; // Color(rgba)
 	float size, angle, weight;
 	float life; // Remaining life of the particle. if <0 : dead and unused.
 	float cameradistance; // *Squared* distance to the camera. if dead : -1.0f

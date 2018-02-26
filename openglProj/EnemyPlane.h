@@ -16,6 +16,11 @@ public:
 	ALSource * alHitSource;
 	ALSource * alExplosionSource;
 
+	float collisionParticleTime = 0.0f;
+
+	bool isWillBeDeleted = false;
+
+	glm::vec3 boostPosition = glm::vec3(-0.05f, 0.0f, -0.1f);
 
 	EnemyPlane(Control * control, PlayerPlane * playerPlanePtr, int hp, CollisionProcessInfo* cpi, float speed, float maxSpeed, float acc, TextManager* textManagerPtr, DDOWithCollision * ddoWithCollision, PlaneDeltaParam planeDeltaParam)
 		: Plane(hp, cpi, speed, maxSpeed, acc, textManagerPtr, ddoWithCollision, planeDeltaParam), m_playerPlanePtr(playerPlanePtr), m_control(control) {
@@ -36,8 +41,11 @@ public:
 
 	virtual void collisionOccur(CollisionProcessInfo * anotherCpi) override {
 		//collision process with anotherCpi
+		printf("collision occur enemy\n");
 		alHitSource->sourcePlay();
 		m_hp -= anotherCpi->m_dmg;
+		collisionParticleTime = 1.0f;
+		damagedParticleSource->frameVsParticle = 2;
 	}
 
 
@@ -54,13 +62,53 @@ public:
 		m_planeDeltaParam.addPitch(deltaTime * m_planeDeltaParam.pitchDelta * m_control->m_mouseDeltaYPos);
 		m_planeDeltaParam.addRoll(deltaTime * m_planeDeltaParam.rollDelta *m_control->m_mouseDeltaXPos);
 		*/
+		if(!isWillBeDeleted){
+			move(deltaTime);
 
-		move(deltaTime);
+			alLaserSource->modifyPos(m_ddoWithCollision->modelVec + glm::vec3(m_ddoWithCollision->getRotationMatrix() * glm::vec4(0.0f, 0.0f, 0.3f, 0.0f)));
 
-		alLaserSource->modifyPos(m_ddoWithCollision->modelVec + glm::vec3(m_ddoWithCollision->getRotationMatrix() * glm::vec4(0.0f, 0.0f, 0.3f, 0.0f)));
+			//collisionParticle end
+			if (collisionParticleTime >= 0.0f) {
+				damagedParticleSource->startPos = m_ddoWithCollision->modelVec;
+				collisionParticleTime -= deltaTime;
+				if (collisionParticleTime < 0.0f) {
+					collisionParticleTime = 0.0f;
+					damagedParticleSource->frameVsParticle = 0;
+				}
+			}
 
-		if (m_hp <= 0) {
-			isCollisionObjDelete = true;
+			//boost Particle Progress	
+			backParticleSource->frameVsParticle = 22 - (int)(m_speed / m_maxSpeed * 100 * 20);	//21 - (0~20)
+			backParticleSource->startPos = m_ddoWithCollision->modelVec + boostPosition;
+
+
+			if (m_hp <= 0) {
+				isCollisionCheck = false;
+				m_ddoWithCollision->isDrawableObjDraw = false;
+				alExplosionSource->sourcePlay();
+				isWillBeDeleted = true;
+			}
+
+		}
+		else {
+			//collisionParticle progress end
+			if (collisionParticleTime >= 0.0f) {
+				damagedParticleSource->startPos = m_ddoWithCollision->modelVec;
+				collisionParticleTime -= deltaTime;
+				if (collisionParticleTime < 0.0f) {
+					collisionParticleTime = 0.0f;
+					damagedParticleSource->frameVsParticle = 0;
+				}
+			}
+
+			if (damagedParticleSource->frameVsParticle == 0) {
+				backParticleSource->frameVsParticle = 0;
+				ALint sourceState;
+				alGetSourcei(alExplosionSource->m_sourceID, AL_SOURCE_STATE, &sourceState);
+				if (sourceState != AL_PLAYING) {
+					isCollisionObjDelete = true;
+				}
+			}
 		}
 	}
 

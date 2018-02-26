@@ -19,6 +19,7 @@
 #include <LaserBullet.h>
 #include <ManagerOfManagerObserver.h>
 #include <ParticleManager.h>
+#include <ParticleInfo.h>
 
 #include <windows.h>
 #include <ALManager.h>
@@ -135,6 +136,11 @@ public:
 	void makeGameObjects() {
 		//make game object
 		//float collisionBox[3] = { 1.3f, 0.3f, 1.0f };
+		int redColorStartRange[4] = { 230, 10, 10, 100 };
+		int redColorEndRange[4] = { 255, 40, 40, 160 };
+
+		int greenColorStartRange[4] = {10, 160, 10, 100 };
+		int greenColorEndRange[4] = { 60, 245, 60, 160 };
 
 		DynamicDrawableObjectWithTexture* tempPlayerPlaneDDOPtr = makeObject("playerObject", "smallShip", "uvMapTexture", glm::vec3(0, 0, 0.1), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), planeCollisionCenterCompensationVec, collisionBox);
 		
@@ -143,6 +149,10 @@ public:
 		playerPlanePtr->bindHitSourceToALSound(alManager->getALSoundPtrWithName("hit"));
 		playerPlanePtr->bindExplosionSourceToALSound(alManager->getALSoundPtrWithName("explosion"));
 		playerPlanePtr->registerObserver(this);
+		playerPlanePtr->registerBackParticle(particleManager->registerNewParticleInfo(
+			new ParticleInfo(true, 0, 2.0f, glm::vec3(0.0f), glm::vec3(0.0f), 0.2f, greenColorStartRange, greenColorEndRange, 0.03f, 0.07f)));
+		playerPlanePtr->registerDamagedParticle(particleManager->registerNewParticleInfo(
+			new ParticleInfo(false, 0, 1.0f, glm::vec3(0.0f), glm::vec3(0.0f), 0.6f, redColorStartRange, redColorEndRange, 0.03f, 0.07f)));
 		hasCollisionObjList.push_back(playerPlanePtr);
 
 
@@ -152,15 +162,20 @@ public:
 		tempEnemyPlanePtr->bindHitSourceToALSound(alManager->getALSoundPtrWithName("hit"));
 		tempEnemyPlanePtr->bindExplosionSourceToALSound(alManager->getALSoundPtrWithName("explosion"));
 		tempEnemyPlanePtr->registerObserver(this);
+		tempEnemyPlanePtr->registerBackParticle(particleManager->registerNewParticleInfo(
+			new ParticleInfo(true, 20, 2.0f, glm::vec3(0.0f), glm::vec3(0.0f), 0.02f, greenColorStartRange, greenColorEndRange, 0.03f, 0.07f)));
+		tempEnemyPlanePtr->registerDamagedParticle(particleManager->registerNewParticleInfo(
+			new ParticleInfo(false, 0, 1.0f, glm::vec3(0.0f), glm::vec3(0.0f), 0.6f, redColorStartRange, redColorEndRange, 0.03f, 0.07f)));
 		hasCollisionObjList.push_back(tempEnemyPlanePtr);
 
-
+		/*
 		LaserBullet * tempLaserBullet;
 		
 		tempEnemyPlaneDDOPtr = makeObject("missieObj1", "missile", "uvMapTexture", glm::vec3(2.0f, 2.0f, 5.0f), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), missileCollisionCenterCompensationVec, missileCollisionBox);
 		tempLaserBullet = new LaserBullet(control, playerPlanePtr, 100, planeCPI, 10.0f, 10.0f, 1.0f, textManager, (DDOWithCollision*)tempEnemyPlaneDDOPtr, *deltaParamPtr);
 		tempLaserBullet->registerObserver(this);
 		hasCollisionObjList.push_back(tempLaserBullet);
+		*/
 
 	}
 
@@ -170,15 +185,17 @@ public:
 
 		for (collisionPtrListIterator = hasCollisionObjList.begin(); collisionPtrListIterator != hasCollisionObjList.end(); ++collisionPtrListIterator) {
 			HasCollisionObj* tempCollisionPtr = *collisionPtrListIterator;
-
-			for (collisionPtrListInnerIterator = std::next(collisionPtrListIterator); collisionPtrListInnerIterator != hasCollisionObjList.end(); ++collisionPtrListInnerIterator) {
-				HasCollisionObj* tempCompCollisionPtr = *collisionPtrListInnerIterator;
-				if (tempCollisionPtr->collisionCheck(tempCompCollisionPtr)) {
-					//collision occur!
-					tempCollisionPtr->collisionOccur(tempCompCollisionPtr->m_cpi);
-					tempCompCollisionPtr->collisionOccur(tempCollisionPtr->m_cpi);
+			if (tempCollisionPtr->isCollisionCheck == true) {
+				for (collisionPtrListInnerIterator = std::next(collisionPtrListIterator); collisionPtrListInnerIterator != hasCollisionObjList.end(); ++collisionPtrListInnerIterator) {
+					HasCollisionObj* tempCompCollisionPtr = *collisionPtrListInnerIterator;
+					if (tempCollisionPtr->collisionCheck(tempCompCollisionPtr)) {
+						//collision occur!
+						tempCollisionPtr->collisionOccur(tempCompCollisionPtr->m_cpi);
+						tempCompCollisionPtr->collisionOccur(tempCollisionPtr->m_cpi);
+					}
 				}
 			}
+			
 		}
 	}
 
@@ -229,7 +246,7 @@ public:
 						it = objectStorage[i][k].erase(it);
 						delete deleteDrawableObjectWithTexture;
 					}
-					else {
+					else if((*it)->isDrawableObjDraw){
 						//draw
 						glm::mat4 depthModelMatrix = (*it)->getRetMatrix();
 						glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrixNEW * depthModelMatrix;
@@ -241,6 +258,9 @@ public:
 							GL_UNSIGNED_SHORT,   // type
 							(void*)bufferManager->elementOffset[k]         // element array buffer offset
 						);
+						++it;
+					}
+					else {
 						++it;
 					}
 				}
@@ -306,7 +326,7 @@ public:
 				glBindVertexArray(bufferManager->vertexArrayObjectIDVec[k]);
 
 				for (DrawableObjectWithTexture * storageElem : objectStorage[i][k]) {
-					if (storageElem->isDrawableObjDelete == false) {
+					if (storageElem->isDrawableObjDelete == false && storageElem->isDrawableObjDraw) {
 						glm::mat4 Model = storageElem->getRetMatrix();
 						glm::mat4 mvp = ProjectionMatrix * ViewMatrix  * Model;
 						glUniformMatrix4fv(shaderMainPtr->m_modelMatrixID, 1, GL_FALSE, &Model[0][0]);
@@ -331,7 +351,7 @@ public:
 
 	}
 	void collisionBoxDraw() {
-		glDisable(GL_DEPTH_TEST);
+		//glDisable(GL_DEPTH_TEST);
 		ShaderObj* shaderCollisionPtr = shaderManager->getShaderPtrWithEnum(ShaderManager::ENUM_SHADER_IDX::COLISION);
 
 
@@ -392,7 +412,7 @@ public:
 			collisionElementOffset += unsignedShortSize * 24;
 		}
 		glBindVertexArray(0);
-		glEnable(GL_DEPTH_TEST);
+		//glEnable(GL_DEPTH_TEST);
 	}
 	void drawParticles() {
 		particleManager->setUniform(ViewMatrix, ProjectionMatrix);
@@ -467,6 +487,7 @@ public:
 		tempLaserBullet = new LaserBullet(control, playerPlanePtr, 100, planeCPI, 10.0f, 10.0f, 1.0f, textManager, tempDDOPtr, *deltaParamPtr);
 		hasCollisionObjList.push_back(tempLaserBullet);
 	}
+
 
 	//delete progress
 	/*

@@ -1,5 +1,5 @@
 #pragma once
-
+#include <ParticleInfo.h>
 class ManagerOfManagerObserver {
 public:
 	ManagerOfManagerObserver() {
@@ -8,6 +8,7 @@ public:
 	virtual void bulletFire(glm::vec3 pos, glm::mat4 rotMat) {
 
 	}
+
 	virtual ~ManagerOfManagerObserver() {
 
 	}

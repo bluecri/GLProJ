@@ -46,7 +46,17 @@ public:
 	void init() {
 		shaderParticlePtr = new ShaderParticle("shader/Particle.vertexshader", "shader/Particle.fragmentshader");
 		particleCommonTexture = loadDDS("texture/particle.DDS");
-		particleInfoPtrList.push_back(new ParticleInfo());
+	}
+
+	ParticleInfo* registerNewParticleInfo() {
+		ParticleInfo* tempParticleInfoPtr = new ParticleInfo();
+		particleInfoPtrList.push_back(tempParticleInfoPtr);
+		return tempParticleInfoPtr;
+	}
+
+	ParticleInfo* registerNewParticleInfo(ParticleInfo* pInfo) {
+		particleInfoPtrList.push_back(pInfo);
+		return pInfo;
 	}
 
 	void bufferInit() {
@@ -121,11 +131,25 @@ public:
 	void adjustNewParticles() {
 		//for particleinfo¸¸Å­
 		for (ParticleInfo* elem : particleInfoPtrList) {
-			for (int num = 0; num < elem->particleFlowPerFrame; num++) {
-				int particleIndex = particleSystemPtr->FindUnusedParticle();
-				Particle &refTargetParticle = particleSystemPtr->particlesContainer[particleIndex];
-				elem->createNewParticle(refTargetParticle);
+			if (elem->isOneParticlePerMultiFrame) {
+				if (elem->frameVsParticle != 0 && elem->countFrame >= elem->frameVsParticle) {
+					int particleIndex = particleSystemPtr->FindUnusedParticle();
+					Particle &refTargetParticle = particleSystemPtr->particlesContainer[particleIndex];
+					elem->createNewParticle(refTargetParticle);
+					elem->countFrame = 0;
+				}
+				else {
+					elem->countFrame += 1;
+				}
 			}
+			else {
+				for (int num = 0; num < elem->frameVsParticle; num++) {
+					int particleIndex = particleSystemPtr->FindUnusedParticle();
+					Particle &refTargetParticle = particleSystemPtr->particlesContainer[particleIndex];
+					elem->createNewParticle(refTargetParticle);
+				}
+			}
+			
 		}
 	}
 
@@ -154,10 +178,10 @@ public:
 					g_particule_position_size_data[4 * particlesCountForBuffer + 2] = p->pos.z;
 					g_particule_position_size_data[4 * particlesCountForBuffer + 3] = p->size;
 
-					g_particule_color_data[4 * particlesCountForBuffer + 0] = p->r;
-					g_particule_color_data[4 * particlesCountForBuffer + 1] = p->g;
-					g_particule_color_data[4 * particlesCountForBuffer + 2] = p->b;
-					g_particule_color_data[4 * particlesCountForBuffer + 3] = p->a;
+					g_particule_color_data[4 * particlesCountForBuffer + 0] = p->color[0];
+					g_particule_color_data[4 * particlesCountForBuffer + 1] = p->color[1];
+					g_particule_color_data[4 * particlesCountForBuffer + 2] = p->color[2];
+					g_particule_color_data[4 * particlesCountForBuffer + 3] = p->color[3];
 				}
 				else {
 					// Particles that just died will be put at the end of the buffer in SortParticles();
@@ -174,8 +198,6 @@ public:
 	}
 
 	void drawParticles() {
-
-		
 		glBindVertexArray(particleVertexID);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

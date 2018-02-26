@@ -19,6 +19,9 @@ public:
 
 	ManagerOfManagerObservee* observee;
 
+	ParticleInfo* backParticleSource;
+	ParticleInfo* damagedParticleSource;
+
 	PlaneDeltaParam m_planeDeltaParam;
 
 	Plane(int hp, CollisionProcessInfo * cpi, float speed, float maxSpeed, float acc, TextManager* textManagerPtr, DDOWithCollision * ddoWithCollision, PlaneDeltaParam planeDeltaParam)
@@ -84,7 +87,12 @@ public:
 			0.0, 0.0, 0.0, 1.0);
 	}
 
-
+	void registerBackParticle(ParticleInfo *backParticle) {
+		backParticleSource = backParticle;
+	}
+	void registerDamagedParticle(ParticleInfo *dmgParticle) {
+		damagedParticleSource = dmgParticle;
+	}
 
 	void registerObserver(ManagerOfManagerObserver *observer) {
 		observee->registerObserver(observer);

@@ -167,7 +167,7 @@ public:
 			alcMakeContextCurrent(alCcontext);
 		}
 		//al mode
-		alDistanceModel(AL_EXPONENT_DISTANCE_CLAMPED);
+		alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
 		loadAllWaveFile();
 	}
 
