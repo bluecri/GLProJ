@@ -52,6 +52,8 @@
     </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ManagerOfManagercpp.cpp" />
+    <ClCompile Include="ParticleInfo.cpp" />
+    <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="PlayerPlane.cpp" />
     <ClCompile Include="src\game\CameraObject.cpp" />
     <ClCompile Include="src\game\DrawableObjectWithTexture.cpp" />
@@ -96,10 +98,15 @@
     <ClInclude Include="ManagerOfManagerObservee.h" />
     <ClInclude Include="ManagerOfManagerObserver.h" />
     <ClInclude Include="OBBStruct.h" />
+    <ClInclude Include="ParticleInfo.h" />
+    <ClInclude Include="ParticleManager.h" />
+    <ClInclude Include="ParticleStruct.h" />
+    <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="PlaneDeltaParam.h" />
     <ClInclude Include="PlayerPlane.h" />
     <ClInclude Include="PrintTextListObj.h" />
+    <ClInclude Include="ShaderParticle.h" />
     <ClInclude Include="SingletonManager.h" />
     <ClInclude Include="src\game\CameraObject.h" />
     <ClInclude Include="src\game\DrawableObject.h" />

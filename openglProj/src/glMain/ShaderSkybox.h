@@ -1,3 +1,4 @@
+#pragma once
 #include <src/glMain/ShaderObj.h>
 
 class ShaderSkybox : public ShaderObj{	

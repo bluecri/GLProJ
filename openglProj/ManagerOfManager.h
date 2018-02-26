@@ -18,6 +18,7 @@
 
 #include <LaserBullet.h>
 #include <ManagerOfManagerObserver.h>
+#include <ParticleManager.h>
 
 #include <windows.h>
 #include <ALManager.h>
@@ -30,6 +31,7 @@ public:
 	TextManager* textManager;
 	SkyboxObjManager* skyboxManager;
 	ALManager * alManager;
+	ParticleManager * particleManager;
 
 	CameraObject * mainCameraObjectPtr;
 
@@ -73,6 +75,7 @@ public:
 		textManager = new TextManager();
 		skyboxManager = new SkyboxObjManager();
 		alManager = new ALManager();
+		particleManager = new ParticleManager();
 	}
 
 	void init(GLFWwindow* window, int width, int height) {
@@ -90,7 +93,8 @@ public:
 		skyboxManager->bufferInit();
 
 		alManager->init();
-
+		particleManager->init();
+		particleManager->bufferInit();
 		//const
 		planeCPI = new CollisionProcessInfo(10);
 		planeCollisionCenterCompensationVec = glm::vec3(0.0f, 0.0f, 0.5f);
@@ -327,6 +331,7 @@ public:
 
 	}
 	void collisionBoxDraw() {
+		glDisable(GL_DEPTH_TEST);
 		ShaderObj* shaderCollisionPtr = shaderManager->getShaderPtrWithEnum(ShaderManager::ENUM_SHADER_IDX::COLISION);
 
 
@@ -387,6 +392,13 @@ public:
 			collisionElementOffset += unsignedShortSize * 24;
 		}
 		glBindVertexArray(0);
+		glEnable(GL_DEPTH_TEST);
+	}
+	void drawParticles() {
+		particleManager->setUniform(ViewMatrix, ProjectionMatrix);
+		particleManager->adjustNewParticles();
+		particleManager->updateAndRegisterParticles(control->m_deltaTime, mainCameraObjectPtr->modelVec);
+		particleManager->drawParticles();
 	}
 
 	void endDraws() {
@@ -406,9 +418,12 @@ public:
 		renderToScreenStart();
 		drawSkybox();
 		drawObjects();
-		uiDraw();
+		drawParticles();
 
 		collisionBoxDraw();
+
+		uiDraw();
+		
 		endDraws();
 	}
 

@@ -21,6 +21,11 @@ class ShaderObj {
 		GLuint depthMatrixID;
 
 		GLuint m_text2DUniformID;
+
+		//particle
+		GLuint m_cameraRight_worldspace_ID;
+		GLuint m_cameraUp_worldspace_ID;
+		GLuint m_viewProjMatrixID;
 		
 		ShaderObj(const char * vertexShader, const char * fragmentShader) {
 			m_shaderID = LoadShaders(vertexShader, fragmentShader);
@@ -36,6 +41,10 @@ class ShaderObj {
 			depthMatrixID = -1;
 
 			m_text2DUniformID = -1;
+
+			m_cameraRight_worldspace_ID = -1;
+			m_cameraUp_worldspace_ID = -1;
+			m_viewProjMatrixID = -1;
 		}
 
 		GLuint getShaderID() {

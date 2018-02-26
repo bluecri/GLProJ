@@ -114,6 +114,12 @@
     <ClCompile Include="ManagerOfManagercpp.cpp">
       <Filter>헤더 파일\glMain</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleManager.cpp">
+      <Filter>소스 파일\glMain</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleInfo.cpp">
+      <Filter>소스 파일\glMain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\glMain\Vertex.h">
@@ -265,6 +271,21 @@
     </ClInclude>
     <ClInclude Include="ManagerOfManagerObservee.h">
       <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleStruct.h">
+      <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleManager.h">
+      <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleInfo.h">
+      <Filter>소스 파일\glMain</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderParticle.h">
+      <Filter>헤더 파일\glMain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
