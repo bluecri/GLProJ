@@ -22,7 +22,6 @@ public:
 
 	float collisionParticleTime = 0.0f;
 
-	bool isWillBeDeleted = false;
 
 	glm::vec3 boostPosition = glm::vec3(-0.05f, 0.0f, -0.1f);
 

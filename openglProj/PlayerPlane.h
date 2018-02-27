@@ -43,6 +43,8 @@ public:
 	std::string hpString = "HP : ";
 	std::string outputHpString = "HP : ";
 
+	std::string outputGameOverString = "Restart R Key";
+
 
 	PlayerPlane(Control* control, CameraObject * mainCamera, int hp, CollisionProcessInfo * cpi, float speed, float maxSpeed, float acc, TextManager* textManagerPtr, DDOWithCollision * ddoWithCollision, PlaneDeltaParam planeDeltaParam)
 		:  Plane(hp, cpi, speed, maxSpeed, acc, textManagerPtr, ddoWithCollision, planeDeltaParam), m_control(control), m_mainCamera(mainCamera){
@@ -174,7 +176,12 @@ public:
 				ALint sourceState;
 				alGetSourcei(alExplosionSource->m_sourceID, AL_SOURCE_STATE, &sourceState);
 				if (sourceState != AL_PLAYING) {
-					isCollisionObjDelete = true;
+					//isCollisionObjDelete = true;
+					//send gameover to manager
+					m_textManagerPtr->addPrintTextList(0, outputGameOverString.c_str(), 380, 280, 40, 0.001);
+					if (m_control->iskeyUp[Control::R]) {
+						observee->notifyGameRestart();
+					}
 				}
 			}
 		}

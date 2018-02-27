@@ -8,6 +8,8 @@ public:
 	bool isCollisionObjDelete = false;	//if false, dead object and will be deleted. Cannot access ddo.
 	bool isCollisionCheck = true;	//check collision or not
 
+	bool isWillBeDeleted = false;	//object will be deleted in logic.
+
 	HasCollisionObj(DDOWithCollision * ddoWithCollision, CollisionProcessInfo * cpi)
 		: m_ddoWithCollision(ddoWithCollision), m_cpi(cpi){
 

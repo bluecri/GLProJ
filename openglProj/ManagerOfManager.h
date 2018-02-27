@@ -39,6 +39,8 @@ public:
 
 	Control * control;
 
+	bool isRestart = false;
+
 
 	//PortAudioClass * portAudioManage
 
@@ -177,7 +179,26 @@ public:
 		tempLaserBullet->registerObserver(this);
 		hasCollisionObjList.push_back(tempLaserBullet);
 		*/
+	}
 
+	void gameLogicUpdate() {
+		if (isRestart) {
+			isRestart = false;
+			playerPlanePtr->m_hp = 100;
+			playerPlanePtr->m_speed = 0.0f;
+			playerPlanePtr->isCollisionCheck = true;
+			playerPlanePtr->m_ddoWithCollision->isDrawableObjDraw = true;
+			playerPlanePtr->isWillBeDeleted = false;
+
+			for (HasCollisionObj* elem : hasCollisionObjList) {
+				if (elem != playerPlanePtr) {
+					elem->isWillBeDeleted = true;
+				}
+			}
+		}
+		else {
+
+		}
 	}
 
 	void collisionCheck() {
@@ -208,13 +229,13 @@ public:
 		float deltaTimeInLoop = control->m_deltaTime;
 
 		for (std::list<HasCollisionObj*>::iterator it = hasCollisionObjList.begin(); it != hasCollisionObjList.end();) {
-			(*it)->update(deltaTimeInLoop);			//update() all obj
 			if ((*it)->isCollisionObjDelete) {
 				(*it)->m_ddoWithCollision->isDrawableObjDelete = true;	//check one more time.
 				delete *it;
 				it = hasCollisionObjList.erase(it);		//remove collision obj
 			}
 			else {
+				(*it)->update(deltaTimeInLoop);			//update() all obj
 				++it;
 			}
 		}
@@ -434,6 +455,8 @@ public:
 		doControlProgress();
 
 		updateCameraMVP();
+
+		gameLogicUpdate();
 		updateGameObject();
 
 		drawShadowDepthToBuffer();
@@ -490,6 +513,9 @@ public:
 		hasCollisionObjList.push_back(tempLaserBullet);
 	}
 
+	virtual void restartGame() override {
+		isRestart = true;
+	}
 
 	//delete progress
 	/*

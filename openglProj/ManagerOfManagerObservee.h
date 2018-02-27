@@ -21,6 +21,9 @@ public:
 	virtual void notifyBulletFire(glm::vec3 pos, glm::mat4 rotMat) {
 		m_observer->bulletFire(pos, rotMat);
 	}
+	virtual void notifyGameRestart() {
+		m_observer->restartGame();
+	}
 	virtual ~ManagerOfManagerObservee() {
 
 	}

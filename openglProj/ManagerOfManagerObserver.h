@@ -9,6 +9,10 @@ public:
 
 	}
 
+	virtual void restartGame() {
+
+	}
+
 	virtual ~ManagerOfManagerObserver() {
 
 	}
