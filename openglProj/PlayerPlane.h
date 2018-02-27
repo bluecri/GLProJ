@@ -37,6 +37,12 @@ public:
 	float cameraEyeZDelta[CAMERA_MODE_LEN] = { 4.5f,-0.8f, -4.5f, 4.0f };
 	float cameraLookDelta[CAMERA_MODE_LEN] = { 10.0f, 0.8f, 1.5f, -2.0f };
 
+	std::string speedString = "speed : ";
+	std::string outputSpeedString = "speed : ";
+
+	std::string hpString = "HP : ";
+	std::string outputHpString = "HP : ";
+
 
 	PlayerPlane(Control* control, CameraObject * mainCamera, int hp, CollisionProcessInfo * cpi, float speed, float maxSpeed, float acc, TextManager* textManagerPtr, DDOWithCollision * ddoWithCollision, PlaneDeltaParam planeDeltaParam)
 		:  Plane(hp, cpi, speed, maxSpeed, acc, textManagerPtr, ddoWithCollision, planeDeltaParam), m_control(control), m_mainCamera(mainCamera){
@@ -124,6 +130,12 @@ public:
 			alListener->modifyPos(m_ddoWithCollision->modelVec);
 			alListener->modifyOrientationWithRotationMatrix(m_ddoWithCollision->getRotationMatrix());
 			alLaserSource->modifyPos(m_ddoWithCollision->modelVec + glm::vec3(m_ddoWithCollision->getRotationMatrix() * glm::vec4(0.0f, 0.0f, 0.3f, 0.0f)));
+
+			//speed text
+			outputSpeedString = speedString + std::to_string(m_speed);
+			outputHpString = hpString + std::to_string(m_hp);
+			m_textManagerPtr->addPrintTextList(0, outputSpeedString.c_str(), 40, 60, 20, 0.001);
+			m_textManagerPtr->addPrintTextList(0, outputHpString.c_str(), 40, 40, 20, 0.001);
 
 			//collisionParticle progress end
 			if (collisionParticleTime >= 0.0f) {

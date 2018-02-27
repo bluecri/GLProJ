@@ -1,40 +1,40 @@
 #pragma once
 #include <cstring>
+#include <glm/glm.hpp>
 
-class PrintTextListObj{
+class PrintTextListWithModelVecObj {
 public:
 	float m_printDurationDeltaTime;
 	int m_textManagerIndex;
 	char * m_text;
-	int m_x, m_y, m_size;
+	int m_size;
+	glm::vec3 modelVec;
 
-	
-	PrintTextListObj(int index, const char * text, int x, int y, int size, float durationTime) : m_printDurationDeltaTime(durationTime), m_textManagerIndex(index), m_x(x), m_y(y), m_size(size) {
+
+	PrintTextListWithModelVecObj(int index, const char * text, glm::vec3 modelVec, int size, float durationTime) : m_printDurationDeltaTime(durationTime), m_textManagerIndex(index), modelVec(modelVec), m_size(size) {
 		m_text = new char[strlen(text) + 1];
 		strcpy(m_text, text);
 	}
 
-	PrintTextListObj(const PrintTextListObj& copy) {
+	PrintTextListWithModelVecObj(const PrintTextListWithModelVecObj& copy) {
 		m_printDurationDeltaTime = copy.m_printDurationDeltaTime;
 		m_textManagerIndex = copy.m_textManagerIndex;
-		m_x = copy.m_x;
-		m_y = copy.m_y;
+		modelVec = copy.modelVec;
 		m_size = copy.m_size;
 		m_text = new char[strlen(copy.m_text) + 1];
 		strcpy(m_text, copy.m_text);
 	}
 
-	PrintTextListObj operator=(const PrintTextListObj& eq) {
+	PrintTextListWithModelVecObj operator=(const PrintTextListWithModelVecObj& eq) {
 		m_printDurationDeltaTime = eq.m_printDurationDeltaTime;
 		m_textManagerIndex = eq.m_textManagerIndex;
-		m_x = eq.m_x;
-		m_y = eq.m_y;
+		modelVec = eq.modelVec;
 		m_size = eq.m_size;
 		m_text = new char[strlen(eq.m_text) + 1];
 		strcpy(m_text, eq.m_text);
 	}
 
-	~PrintTextListObj() {
+	~PrintTextListWithModelVecObj() {
 		delete[] m_text;
 	}
 };

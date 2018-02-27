@@ -110,9 +110,10 @@ public:
 		openglResourceManager->addVertexVec("smallShip", "obj/SpaceShip.obj");
 		openglResourceManager->addVertexVec("room", "obj/room_thickwalls.obj");
 		openglResourceManager->addVertexVec("missile", "obj/missile.obj");
+		openglResourceManager->addVertexVec("monkeyVertex", "obj/suzanne.obj");
 		openglResourceManager->addTextureVec("uvMapTexture", "texture/uvmap.DDS");
 		//openglResourceManager->addVertexVec("BigShip", "Aircraft_Export_Ready.obj");
-		//openglResourceManager->addVertexVec("monkeyVertex", "suzanne.obj");
+		
 		//openglResourceManager->addTextureVec("uvMapTexture", "uvmap.DDS");
 		//openglResourceManager->addVertexVec("monkeyVertex", "suzanne.obj");
 
@@ -142,7 +143,7 @@ public:
 		int greenColorStartRange[4] = {10, 160, 10, 100 };
 		int greenColorEndRange[4] = { 60, 245, 60, 160 };
 
-		DynamicDrawableObjectWithTexture* tempPlayerPlaneDDOPtr = makeObject("playerObject", "smallShip", "uvMapTexture", glm::vec3(0, 0, 0.1), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), planeCollisionCenterCompensationVec, collisionBox);
+		DynamicDrawableObjectWithTexture* tempPlayerPlaneDDOPtr = makeObject("playerObject", "smallShip", "uvMapTexture", glm::vec3(0, 0, 0), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), planeCollisionCenterCompensationVec, collisionBox);
 		
 		playerPlanePtr = new PlayerPlane(control, mainCameraObjectPtr, 100, planeCPI, 0.0f, 4.0f, 1.0f, textManager, (DDOWithCollision*)tempPlayerPlaneDDOPtr, *deltaParamPtr);
 		playerPlanePtr->bindLaserSourceToALSound(alManager->getALSoundPtrWithName("laser"));
@@ -156,8 +157,8 @@ public:
 		hasCollisionObjList.push_back(playerPlanePtr);
 
 
-		DynamicDrawableObjectWithTexture* tempEnemyPlaneDDOPtr = makeObject("enemyObject", "smallShip", "uvMapTexture", glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), planeCollisionCenterCompensationVec, collisionBox);
-		EnemyPlane* tempEnemyPlanePtr = new EnemyPlane(control, playerPlanePtr, 100, planeCPI, 0.0f, 3.0f, 1.0f, textManager, (DDOWithCollision*)tempEnemyPlaneDDOPtr, *deltaParamPtr);
+		DynamicDrawableObjectWithTexture* tempEnemyPlaneDDOPtr = makeObject("enemyObject", "smallShip", "uvMapTexture", glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), planeCollisionCenterCompensationVec, collisionBox);
+		EnemyPlane* tempEnemyPlanePtr = new EnemyPlane(control, playerPlanePtr, 100, planeCPI, 0.0f, 5.0f, 1.0f, textManager, (DDOWithCollision*)tempEnemyPlaneDDOPtr, *deltaParamPtr);
 		tempEnemyPlanePtr->bindLaserSourceToALSound(alManager->getALSoundPtrWithName("laser"));
 		tempEnemyPlanePtr->bindHitSourceToALSound(alManager->getALSoundPtrWithName("hit"));
 		tempEnemyPlanePtr->bindExplosionSourceToALSound(alManager->getALSoundPtrWithName("explosion"));
@@ -345,10 +346,11 @@ public:
 	}
 
 	void uiDraw() {
-		textManager->printText2DWithIndex(0, "adf", 160, 120, 40);
+		//textManager->printText2DWithIndex(0, "adf", 160, 120, 20);
 		//textManager->printText2DWithIndex(0, "abcdefghijklmnopqrstuvwxyz", 120, 120, 40);
 		//textManager->printText2DWithIndex(0, "ABCDEFGHIJKLMNOPQUSTUVWXYZ", 120, 170, 40);
-
+		textManager->printAllLIst(control->m_deltaTime);
+		textManager->printAllModelVecLIst(ViewMatrix, ProjectionMatrix, control->m_deltaTime, control->m_height, control->m_width);
 	}
 	void collisionBoxDraw() {
 		//glDisable(GL_DEPTH_TEST);

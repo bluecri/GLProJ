@@ -287,6 +287,9 @@
     <ClInclude Include="ShaderParticle.h">
       <Filter>헤더 파일\glMain</Filter>
     </ClInclude>
+    <ClInclude Include="PrintTextListWithModelVecObj.h">
+      <Filter>헤더 파일\glMain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\DepthRTT.fragmentshader">

@@ -5,11 +5,14 @@
 #include "GLFW/glfw3.h"
 
 #include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <src/glMain/ShaderText.h>
 #include <src/glMain/Text2DObj.h>
 
 #include <PrintTextListObj.h>
+#include <PrintTextListWithModelVecObj.h>
 #include <list>
 
 class TextManager {
@@ -18,12 +21,16 @@ public:
 	GLuint Text2DUVBufferID;
 	GLuint text2DVertexID;
 
+	int textWidth = 800;
+	int textHeight = 600;
+
 	std::vector<ShaderText*> shaderTextVec;	//shader list
 	std::vector<GLuint> textTextureVec;	//texture list
 	std::vector<Text2DObj*> text2DObjPtrVec;	//text2dObj list
 
 	std::list<PrintTextListObj> printTextList;
-
+	std::list<PrintTextListWithModelVecObj> printTextListWithModelVec;
+	
 	//
 	TextManager() {
 	};
@@ -90,23 +97,44 @@ public:
 	}
 
 	void addPrintTextListWithRaycast(int index, const char * text, glm::vec3 modelVec, int size, float durationTime) {
-		int x = 140, y = 140;
-
-		//TODO: raycase , get x, y, size
 		
-		PrintTextListObj ptlObj(index, text, x, y, size, durationTime);
-		printTextList.push_back(ptlObj);
+	}
+
+	void addPrintTextListWithModelVec(int index, const char * text, glm::vec3 modelVec, int size, float durationTime) {
+		PrintTextListWithModelVecObj ptlObj(index, text, modelVec, size, durationTime);
+		printTextListWithModelVec.push_back(ptlObj);
 	}
 
 	void printAllLIst(float deltaTime) {
 		std::list<PrintTextListObj>::iterator it = printTextList.begin();
-		for (; it != printTextList.end(); ++it) {
+		for (; it != printTextList.end();) {
 			if (it->m_printDurationDeltaTime > 0.0) {
 				printText2DWithIndex(it->m_textManagerIndex, it->m_text, it->m_x, it->m_y, it->m_size);
 				it->m_printDurationDeltaTime -= deltaTime;
+				++it;
 			}
 			else {
 				it = printTextList.erase(it);
+			}
+		}
+	}
+
+	void printAllModelVecLIst(glm::mat4 viewMatrix, glm::mat4 projMatrix, float deltaTime, int window_height, int window_width) {
+		std::list<PrintTextListWithModelVecObj>::iterator it = printTextListWithModelVec.begin();
+		for (; it != printTextListWithModelVec.end();) {
+			if (it->m_printDurationDeltaTime > 0.0) {
+				int m_x, m_y;	//calc TODO
+				glm::mat4 retMat = projMatrix * viewMatrix * glm::translate((*it).modelVec);
+				m_x = (window_width / 2 + (retMat[3][0] / retMat[3][3]) * (float)window_width / 2) /window_width * textWidth;
+				m_y = (window_height / 2 + (retMat[3][1] / retMat[3][3]) * (float)window_height / 2) / window_height * textHeight;
+
+			
+				printText2DWithIndex(it->m_textManagerIndex, it->m_text, m_x, m_y, it->m_size);
+				it->m_printDurationDeltaTime -= deltaTime;
+				++it;
+			}
+			else {
+				it = printTextListWithModelVec.erase(it);
 			}
 		}
 	}

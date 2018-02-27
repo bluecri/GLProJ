@@ -106,6 +106,7 @@
     <ClInclude Include="PlaneDeltaParam.h" />
     <ClInclude Include="PlayerPlane.h" />
     <ClInclude Include="PrintTextListObj.h" />
+    <ClInclude Include="PrintTextListWithModelVecObj.h" />
     <ClInclude Include="ShaderParticle.h" />
     <ClInclude Include="SingletonManager.h" />
     <ClInclude Include="src\game\CameraObject.h" />
