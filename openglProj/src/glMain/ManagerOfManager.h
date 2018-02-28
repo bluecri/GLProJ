@@ -10,18 +10,22 @@
 #include <src/glMain/shader/ShaderManager.h>
 #include <src/glMain/text/TextManager.h>
 #include <src/glMain/skybox/SkyboxManager.h>
-#include <src/glMain/control/Control.h>
-#include <src/glMain/ManagerOfManagerObserver.h>
-#include <src/glMain/particle/ParticleManager.h>
-#include <src/glMain/particle/ParticleInfo.h>
+#include "src/glMain/particle/ParticleManager.h"
 #include <src/glMain/openAL/ALManager.h>
 
+#include <src/glMain/particle/ParticleInfo.h>
+#include <src/glMain/control/Control.h>
+
 #include <src/game/collisionObject/HasCollisionObj.h>
+
+#include <src/game/gameObject/EnemyPlane.h>
 #include <src/game/gameObject/LaserBullet.h>
 #include <src/game/gameObject/parent/DrawableObjectWithTexture.h>
 
+#include "window/Window.h"
 
-#include <windows.h>
+#include "./ManagerOfManagerObserver.h"
+
 
 
 class ManagerOfManager : ManagerOfManagerObserver{

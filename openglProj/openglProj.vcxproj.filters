@@ -34,38 +34,50 @@
     <Filter Include="소스 파일\commom">
       <UniqueIdentifier>{b05bd042-979b-4537-a3d1-f6eaf1241017}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\game\camera">
+      <UniqueIdentifier>{27a1c2cb-2e77-4d7f-b828-39ea263b37ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\game\collisionObject">
+      <UniqueIdentifier>{242b4b6c-a107-4904-a839-d3e4299620a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\game\gameObject">
+      <UniqueIdentifier>{d873814b-6de5-4c22-85b9-3722e18ca66b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\game\gameObject\param">
+      <UniqueIdentifier>{e7125aaa-4c6d-4401-a496-033a42059fdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\game\gameObject\parent">
+      <UniqueIdentifier>{5c9869a2-9ef9-4415-967b-51d68cb32a42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\glMain\bufferAndResource">
+      <UniqueIdentifier>{e9a123b3-6a60-4f7f-9049-e71a31df8d81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\glMain\control">
+      <UniqueIdentifier>{cb864567-897a-43c8-8109-1abce3bf98c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\glMain\objectAndTexture">
+      <UniqueIdentifier>{c11d6112-1707-4cc0-b091-a7b79ac6c157}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\glMain\openAL">
+      <UniqueIdentifier>{96e14d25-8801-4925-8e44-899e1a24817a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\glMain\particle">
+      <UniqueIdentifier>{632af7eb-49e0-4f0b-bfe5-306a1dd1cb7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\glMain\shader">
+      <UniqueIdentifier>{05a88f8f-632f-47f0-a333-f30f54d1c4c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\glMain\skybox">
+      <UniqueIdentifier>{e9ff4ba8-381e-49fe-91ec-bfa9c2cc7def}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\glMain\text">
+      <UniqueIdentifier>{175660cb-a264-4d8f-8d02-fc117282dd75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\glMain\window">
+      <UniqueIdentifier>{091d6606-2df8-49ce-b425-d38fc6e4368d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\glMain\BufferManager.cpp">
-      <Filter>소스 파일\glMain</Filter>
-    </ClCompile>
-    <ClCompile Include="src\glMain\objectLoader.cpp">
-      <Filter>소스 파일\glMain</Filter>
-    </ClCompile>
-    <ClCompile Include="src\glMain\OpenglResourceManager.cpp">
-      <Filter>소스 파일\glMain</Filter>
-    </ClCompile>
-    <ClCompile Include="src\glMain\texture.cpp">
-      <Filter>소스 파일\glMain</Filter>
-    </ClCompile>
-    <ClCompile Include="src\glMain\vboindexer.cpp">
-      <Filter>소스 파일\glMain</Filter>
-    </ClCompile>
-    <ClCompile Include="src\glMain\Vertex.cpp">
-      <Filter>소스 파일\glMain</Filter>
-    </ClCompile>
-    <ClCompile Include="src\glMain\VertexTexture.cpp">
-      <Filter>소스 파일\glMain</Filter>
-    </ClCompile>
-    <ClCompile Include="src\game\DrawableObjectWithTexture.cpp">
-      <Filter>소스 파일\game</Filter>
-    </ClCompile>
-    <ClCompile Include="src\game\DynamicDrawableObjectWithTexture.cpp">
-      <Filter>소스 파일\game</Filter>
-    </ClCompile>
-    <ClCompile Include="src\game\Object.cpp">
-      <Filter>소스 파일\game</Filter>
-    </ClCompile>
     <ClCompile Include="common\quaternion_utils.cpp">
       <Filter>소스 파일\commom</Filter>
     </ClCompile>
@@ -75,92 +87,71 @@
     <ClCompile Include="common\tangentspace.cpp">
       <Filter>소스 파일\commom</Filter>
     </ClCompile>
-    <ClCompile Include="common\text2D.cpp">
-      <Filter>소스 파일\commom</Filter>
+    <ClCompile Include="src\game\camera\CameraObject.cpp">
+      <Filter>소스 파일\game\camera</Filter>
     </ClCompile>
-    <ClCompile Include="src\glMain\Control.cpp">
-      <Filter>소스 파일\glMain</Filter>
+    <ClCompile Include="src\game\gameObject\parent\DrawableObjectWithTexture.cpp">
+      <Filter>소스 파일\game\gameObject\parent</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\CameraObject.cpp">
-      <Filter>소스 파일\game</Filter>
+    <ClCompile Include="src\game\gameObject\parent\DynamicDrawableObjectWithTexture.cpp">
+      <Filter>소스 파일\game\gameObject\parent</Filter>
     </ClCompile>
-    <ClCompile Include="src\Window.cpp">
+    <ClCompile Include="src\game\gameObject\parent\Object.cpp">
+      <Filter>소스 파일\game\gameObject\parent</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\gameObject\PlayerPlane.cpp">
+      <Filter>소스 파일\game\gameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\bufferAndResource\BufferManager.cpp">
+      <Filter>소스 파일\glMain\bufferAndResource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\bufferAndResource\OpenglResourceManager.cpp">
+      <Filter>소스 파일\glMain\bufferAndResource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\control\Control.cpp">
+      <Filter>소스 파일\glMain\control</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\window\Window.cpp">
+      <Filter>소스 파일\glMain\window</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\text\Text2DObj.cpp">
+      <Filter>소스 파일\glMain\text</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\skybox\SkyboxObj.cpp">
+      <Filter>소스 파일\glMain\skybox</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\shader\ShaderManager.cpp">
+      <Filter>소스 파일\glMain\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\shader\ShaderObj.cpp">
+      <Filter>소스 파일\glMain\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\shader\ShaderText.cpp">
+      <Filter>소스 파일\glMain\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\particle\ParticleInfo.cpp">
+      <Filter>소스 파일\glMain\particle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\particle\ParticleManager.cpp">
+      <Filter>소스 파일\glMain\particle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\objectAndTexture\objectLoader.cpp">
+      <Filter>소스 파일\glMain\objectAndTexture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\objectAndTexture\texture.cpp">
+      <Filter>소스 파일\glMain\objectAndTexture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\objectAndTexture\vboindexer.cpp">
+      <Filter>소스 파일\glMain\objectAndTexture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glMain\main.cpp">
       <Filter>소스 파일\main</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>소스 파일\main</Filter>
-    </ClCompile>
-    <ClCompile Include="src\glMain\ShaderManager.cpp">
-      <Filter>소스 파일\glMain</Filter>
-    </ClCompile>
-    <ClCompile Include="src\glMain\ShaderObj.cpp">
-      <Filter>헤더 파일\glMain</Filter>
-    </ClCompile>
-    <ClCompile Include="src\glMain\ShaderMain.cpp">
-      <Filter>헤더 파일\glMain</Filter>
-    </ClCompile>
-    <ClCompile Include="src\glMain\ShaderText.cpp">
-      <Filter>헤더 파일\glMain</Filter>
-    </ClCompile>
-    <ClCompile Include="src\glMain\Text2DObj.cpp">
-      <Filter>소스 파일\glMain</Filter>
-    </ClCompile>
-    <ClCompile Include="src\glMain\SkyboxObj.cpp">
-      <Filter>소스 파일\glMain</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerPlane.cpp">
-      <Filter>헤더 파일\game</Filter>
-    </ClCompile>
-    <ClCompile Include="ManagerOfManagercpp.cpp">
-      <Filter>헤더 파일\glMain</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticleManager.cpp">
-      <Filter>소스 파일\glMain</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticleInfo.cpp">
+    <ClCompile Include="src\glMain\ManagerOfManagercpp.cpp">
       <Filter>소스 파일\glMain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\glMain\Vertex.h">
-      <Filter>헤더 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="src\glMain\vboindexer.h">
-      <Filter>헤더 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="src\glMain\texture.h">
-      <Filter>헤더 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="src\glMain\OpenglResourceManager.h">
-      <Filter>헤더 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="src\glMain\objectLoader.h">
-      <Filter>헤더 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="src\glMain\BufferManager.h">
-      <Filter>헤더 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="src\glMain\BeforeLoadedVertexWithTexture.h">
-      <Filter>헤더 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="src\glMain\BeforeLoadedTexture.h">
-      <Filter>헤더 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="src\game\DrawableObject.h">
-      <Filter>헤더 파일\game</Filter>
-    </ClInclude>
-    <ClInclude Include="src\game\DrawableObjectWithTexture.h">
-      <Filter>헤더 파일\game</Filter>
-    </ClInclude>
-    <ClInclude Include="src\game\DynamicDrawableObjectWithTexture.h">
-      <Filter>헤더 파일\game</Filter>
-    </ClInclude>
-    <ClInclude Include="src\game\NonDrawableObject.h">
-      <Filter>헤더 파일\game</Filter>
-    </ClInclude>
-    <ClInclude Include="src\game\Object.h">
-      <Filter>헤더 파일\game</Filter>
-    </ClInclude>
     <ClInclude Include="common\quaternion_utils.hpp">
       <Filter>소스 파일\commom</Filter>
     </ClInclude>
@@ -170,125 +161,155 @@
     <ClInclude Include="common\tangentspace.hpp">
       <Filter>소스 파일\commom</Filter>
     </ClInclude>
-    <ClInclude Include="common\text2D.hpp">
-      <Filter>소스 파일\commom</Filter>
+    <ClInclude Include="src\game\camera\CameraObject.h">
+      <Filter>소스 파일\game\camera</Filter>
     </ClInclude>
-    <ClInclude Include="src\glMain\Control.h">
-      <Filter>헤더 파일\glMain</Filter>
+    <ClInclude Include="src\game\collisionObject\CollisionManager.h">
+      <Filter>소스 파일\game\collisionObject</Filter>
     </ClInclude>
-    <ClInclude Include="src\game\CameraObject.h">
-      <Filter>헤더 파일\game</Filter>
+    <ClInclude Include="src\game\collisionObject\CollisionProcessInfo.h">
+      <Filter>소스 파일\game\collisionObject</Filter>
     </ClInclude>
-    <ClInclude Include="src\Window.h">
-      <Filter>소스 파일\main</Filter>
+    <ClInclude Include="src\game\collisionObject\DDOWithCollision.h">
+      <Filter>소스 파일\game\collisionObject</Filter>
     </ClInclude>
-    <ClInclude Include="src\glMain\ShaderManager.h">
-      <Filter>헤더 파일\glMain</Filter>
+    <ClInclude Include="src\game\collisionObject\HasCollisionObj.h">
+      <Filter>소스 파일\game\collisionObject</Filter>
     </ClInclude>
-    <ClInclude Include="src\glMain\ShaderObj.h">
-      <Filter>헤더 파일\glMain</Filter>
+    <ClInclude Include="src\game\collisionObject\OBBStruct.h">
+      <Filter>소스 파일\game\collisionObject</Filter>
     </ClInclude>
-    <ClInclude Include="src\glMain\ShaderMain.h">
-      <Filter>헤더 파일\glMain</Filter>
+    <ClInclude Include="src\game\gameObject\parent\DrawableObject.h">
+      <Filter>소스 파일\game\gameObject\parent</Filter>
     </ClInclude>
-    <ClInclude Include="src\glMain\ShaderShadow.h">
-      <Filter>헤더 파일\glMain</Filter>
+    <ClInclude Include="src\game\gameObject\parent\DrawableObjectWithTexture.h">
+      <Filter>소스 파일\game\gameObject\parent</Filter>
     </ClInclude>
-    <ClInclude Include="src\glMain\ShaderText.h">
-      <Filter>헤더 파일\glMain</Filter>
+    <ClInclude Include="src\game\gameObject\parent\DynamicDrawableObjectWithTexture.h">
+      <Filter>소스 파일\game\gameObject\parent</Filter>
     </ClInclude>
-    <ClInclude Include="src\glMain\Text2DObj.h">
+    <ClInclude Include="src\game\gameObject\parent\NonDrawableObject.h">
+      <Filter>소스 파일\game\gameObject\parent</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\gameObject\parent\Object.h">
+      <Filter>소스 파일\game\gameObject\parent</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\gameObject\parent\Plane.h">
+      <Filter>소스 파일\game\gameObject\parent</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\gameObject\param\PlaneDeltaParam.h">
+      <Filter>소스 파일\game\gameObject\param</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\gameObject\EnemyPlane.h">
+      <Filter>소스 파일\game\gameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\gameObject\LaserBullet.h">
+      <Filter>소스 파일\game\gameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\gameObject\PlayerPlane.h">
+      <Filter>소스 파일\game\gameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\bufferAndResource\BufferManager.h">
+      <Filter>소스 파일\glMain\bufferAndResource</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\bufferAndResource\OpenglResourceManager.h">
+      <Filter>소스 파일\glMain\bufferAndResource</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\control\Control.h">
+      <Filter>소스 파일\glMain\control</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\window\Window.h">
+      <Filter>소스 파일\glMain\window</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\text\PrintTextListObj.h">
+      <Filter>소스 파일\glMain\text</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\text\PrintTextListWithModelVecObj.h">
+      <Filter>소스 파일\glMain\text</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\text\Text2DObj.h">
+      <Filter>소스 파일\glMain\text</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\text\TextManager.h">
+      <Filter>소스 파일\glMain\text</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\skybox\SkyboxManager.h">
+      <Filter>소스 파일\glMain\skybox</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\skybox\SkyboxObj.h">
+      <Filter>소스 파일\glMain\skybox</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\shader\ShaderMain.h">
+      <Filter>소스 파일\glMain\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\shader\ShaderManager.h">
+      <Filter>소스 파일\glMain\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\shader\ShaderObj.h">
+      <Filter>소스 파일\glMain\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\shader\ShaderParticle.h">
+      <Filter>소스 파일\glMain\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\shader\ShaderShadow.h">
+      <Filter>소스 파일\glMain\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\shader\ShaderSkybox.h">
+      <Filter>소스 파일\glMain\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\shader\ShaderText.h">
+      <Filter>소스 파일\glMain\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\particle\ParticleInfo.h">
+      <Filter>소스 파일\glMain\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\particle\ParticleManager.h">
+      <Filter>소스 파일\glMain\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\particle\ParticleStruct.h">
+      <Filter>소스 파일\glMain\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\particle\ParticleSystem.h">
+      <Filter>소스 파일\glMain\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\openAL\ALListener.h">
+      <Filter>소스 파일\glMain\openAL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\openAL\ALManager.h">
+      <Filter>소스 파일\glMain\openAL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\openAL\ALSound.h">
+      <Filter>소스 파일\glMain\openAL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\openAL\ALSource.h">
+      <Filter>소스 파일\glMain\openAL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\objectAndTexture\BeforeLoadedTexture.h">
+      <Filter>소스 파일\glMain\objectAndTexture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\objectAndTexture\BeforeLoadedVertexWithTexture.h">
+      <Filter>소스 파일\glMain\objectAndTexture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\objectAndTexture\objectLoader.h">
+      <Filter>소스 파일\glMain\objectAndTexture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\objectAndTexture\texture.h">
+      <Filter>소스 파일\glMain\objectAndTexture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\objectAndTexture\vboindexer.h">
+      <Filter>소스 파일\glMain\objectAndTexture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\objectAndTexture\Vertex.h">
+      <Filter>소스 파일\glMain\objectAndTexture</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glMain\ManagerOfManager.h">
       <Filter>소스 파일\glMain</Filter>
     </ClInclude>
-    <ClInclude Include="src\glMain\SkyboxObj.h">
+    <ClInclude Include="src\glMain\ManagerOfManagerObservee.h">
       <Filter>소스 파일\glMain</Filter>
     </ClInclude>
-    <ClInclude Include="src\glMain\TextManager.h">
-      <Filter>헤더 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="src\glMain\SkyboxManager.h">
-      <Filter>헤더 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="src\glMain\ShaderSkybox.h">
-      <Filter>헤더 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="OBBStruct.h">
-      <Filter>헤더 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="DDOWithCollision.h">
-      <Filter>헤더 파일\game</Filter>
-    </ClInclude>
-    <ClInclude Include="Plane.h">
-      <Filter>헤더 파일\game</Filter>
-    </ClInclude>
-    <ClInclude Include="DmgPrintUI.h">
-      <Filter>소스 파일\game</Filter>
-    </ClInclude>
-    <ClInclude Include="PrintTextListObj.h">
+    <ClInclude Include="src\glMain\ManagerOfManagerObserver.h">
       <Filter>소스 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerPlane.h">
-      <Filter>헤더 파일\game</Filter>
-    </ClInclude>
-    <ClInclude Include="PlaneDeltaParam.h">
-      <Filter>헤더 파일\game</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyPlane.h">
-      <Filter>헤더 파일\game</Filter>
-    </ClInclude>
-    <ClInclude Include="HasCollisionObj.h">
-      <Filter>헤더 파일\game</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionProcessInfo.h">
-      <Filter>헤더 파일\game</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionManager.h">
-      <Filter>소스 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="ManagerOfManager.h">
-      <Filter>소스 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="SingletonManager.h">
-      <Filter>소스 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="ALManager.h">
-      <Filter>소스 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="ALSound.h">
-      <Filter>소스 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="ALSource.h">
-      <Filter>소스 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="ALListener.h">
-      <Filter>소스 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="LaserBullet.h">
-      <Filter>소스 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="ManagerOfManagerObserver.h">
-      <Filter>소스 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="ManagerOfManagerObservee.h">
-      <Filter>소스 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleStruct.h">
-      <Filter>소스 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleSystem.h">
-      <Filter>소스 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleManager.h">
-      <Filter>소스 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleInfo.h">
-      <Filter>소스 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderParticle.h">
-      <Filter>헤더 파일\glMain</Filter>
-    </ClInclude>
-    <ClInclude Include="PrintTextListWithModelVecObj.h">
-      <Filter>헤더 파일\glMain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
