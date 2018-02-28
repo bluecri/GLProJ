@@ -66,7 +66,8 @@ public:
 	glm::mat4 ViewMatrix;	//look at
 	glm::mat4 ModelMatrixSkybox;
 
-	float collisionBox[3] = { 0.6f, 0.2f, 0.4f };
+	//float collisionBox[3] = { 0.6f, 0.2f, 0.4f };
+	float collisionBox[3] = { 0.3f, 0.1f, 0.2f };
 	float missileCollisionBox[3] = { 0.02f, 0.02f, 0.2f };
 	glm::vec3 planeCollisionCenterCompensationVec;
 	PlaneDeltaParam* deltaParamPtr;
@@ -74,6 +75,18 @@ public:
 	glm::vec3 missileCollisionCenterCompensationVec;
 	
 	PlayerPlane * playerPlanePtr;
+
+	int enemyNumID = 0;
+	std::string enemyName = "enemyObject";
+	int level = 0;
+	float levelUpDeltaTime = 10.0f;
+	float curLevelupDeltaTime = 11.0f;
+
+	int redColorStartRange[4] = { 230, 10, 10, 100 };
+	int redColorEndRange[4] = { 255, 40, 40, 160 };
+
+	int greenColorStartRange[4] = { 10, 160, 10, 100 };
+	int greenColorEndRange[4] = { 60, 245, 60, 160 };
 
 	ManagerOfManager() {
 		openglResourceManager = new OpenglResourceManager();
@@ -104,7 +117,7 @@ public:
 		particleManager->bufferInit();
 		//const
 		planeCPI = new CollisionProcessInfo(10);
-		planeCollisionCenterCompensationVec = glm::vec3(0.0f, 0.0f, 0.5f);
+		planeCollisionCenterCompensationVec = glm::vec3(0.0f, 0.0f, 0.2f);
 		missileCollisionCenterCompensationVec = glm::vec3(0.0f, 0.0f, 0.0f);
 		float missileCollisionBox[3] = { 0.02f, 0.02f, 0.2f };
 		deltaParamPtr = new PlaneDeltaParam(0, 0, 0, 0.1, 0.8, 0.1, 0.1, 0.8, 0.1, 0.05, 0.05, 0.05);
@@ -143,15 +156,9 @@ public:
 	void makeGameObjects() {
 		//make game object
 		//float collisionBox[3] = { 1.3f, 0.3f, 1.0f };
-		int redColorStartRange[4] = { 230, 10, 10, 100 };
-		int redColorEndRange[4] = { 255, 40, 40, 160 };
-
-		int greenColorStartRange[4] = {10, 160, 10, 100 };
-		int greenColorEndRange[4] = { 60, 245, 60, 160 };
-
-		DynamicDrawableObjectWithTexture* tempPlayerPlaneDDOPtr = makeObject("playerObject", "smallShip", "uvMapTexture", glm::vec3(0, 0, 0), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), planeCollisionCenterCompensationVec, collisionBox);
+		DynamicDrawableObjectWithTexture* tempPlayerPlaneDDOPtr = makeObject("playerObject", "smallShip", "uvMapTexture", glm::vec3(0, 0, 0), glm::vec3(), glm::vec3(0.1, 0.1, 0.1), planeCollisionCenterCompensationVec, collisionBox);
 		
-		playerPlanePtr = new PlayerPlane(control, mainCameraObjectPtr, 100, planeCPI, 0.0f, 4.0f, 1.0f, textManager, (DDOWithCollision*)tempPlayerPlaneDDOPtr, *deltaParamPtr);
+		playerPlanePtr = new PlayerPlane(control, mainCameraObjectPtr, 100, planeCPI, 0.0f, 5.0f, 1.0f, textManager, (DDOWithCollision*)tempPlayerPlaneDDOPtr, *deltaParamPtr);
 		playerPlanePtr->bindLaserSourceToALSound(alManager->getALSoundPtrWithName("laser"));
 		playerPlanePtr->bindHitSourceToALSound(alManager->getALSoundPtrWithName("hit"));
 		playerPlanePtr->bindExplosionSourceToALSound(alManager->getALSoundPtrWithName("explosion"));
@@ -162,7 +169,7 @@ public:
 			new ParticleInfo(false, 0, 1.0f, glm::vec3(0.0f), glm::vec3(0.0f), 0.6f, redColorStartRange, redColorEndRange, 0.03f, 0.07f)));
 		hasCollisionObjList.push_back(playerPlanePtr);
 
-
+		/*
 		DynamicDrawableObjectWithTexture* tempEnemyPlaneDDOPtr = makeObject("enemyObject", "smallShip", "uvMapTexture", glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(), glm::vec3(0.2, 0.2, 0.2), planeCollisionCenterCompensationVec, collisionBox);
 		EnemyPlane* tempEnemyPlanePtr = new EnemyPlane(control, playerPlanePtr, 100, planeCPI, 0.0f, 5.0f, 1.0f, textManager, (DDOWithCollision*)tempEnemyPlaneDDOPtr, *deltaParamPtr);
 		tempEnemyPlanePtr->bindLaserSourceToALSound(alManager->getALSoundPtrWithName("laser"));
@@ -174,7 +181,7 @@ public:
 		tempEnemyPlanePtr->registerDamagedParticle(particleManager->registerNewParticleInfo(
 			new ParticleInfo(false, 0, 1.0f, glm::vec3(0.0f), glm::vec3(0.0f), 0.6f, redColorStartRange, redColorEndRange, 0.03f, 0.07f)));
 		hasCollisionObjList.push_back(tempEnemyPlanePtr);
-
+		*/
 		/*
 		LaserBullet * tempLaserBullet;
 		
@@ -184,8 +191,26 @@ public:
 		hasCollisionObjList.push_back(tempLaserBullet);
 		*/
 	}
+	
+	void makeEnemy() {
+		glm::vec3 randomPosition = glm::ballRand(20.0f);
+		
+		DynamicDrawableObjectWithTexture* tempEnemyPlaneDDOPtr = makeObject((enemyName + std::to_string(enemyNumID)).c_str(), "smallShip", "uvMapTexture", randomPosition, glm::vec3(), glm::vec3(0.1, 0.1, 0.1), planeCollisionCenterCompensationVec, collisionBox);
+		EnemyPlane* tempEnemyPlanePtr = new EnemyPlane(control, playerPlanePtr, 100, planeCPI, 0.0f, 5.0f, 1.0f, textManager, (DDOWithCollision*)tempEnemyPlaneDDOPtr, *deltaParamPtr);
+		tempEnemyPlanePtr->bindLaserSourceToALSound(alManager->getALSoundPtrWithName("laser"));
+		tempEnemyPlanePtr->bindHitSourceToALSound(alManager->getALSoundPtrWithName("hit"));
+		tempEnemyPlanePtr->bindExplosionSourceToALSound(alManager->getALSoundPtrWithName("explosion"));
+		tempEnemyPlanePtr->registerObserver(this);
+		tempEnemyPlanePtr->registerBackParticle(particleManager->registerNewParticleInfo(
+			new ParticleInfo(true, 20, 2.0f, glm::vec3(0.0f), glm::vec3(0.0f), 0.02f, greenColorStartRange, greenColorEndRange, 0.03f, 0.07f)));
+		tempEnemyPlanePtr->registerDamagedParticle(particleManager->registerNewParticleInfo(
+			new ParticleInfo(false, 0, 1.0f, glm::vec3(0.0f), glm::vec3(0.0f), 0.6f, redColorStartRange, redColorEndRange, 0.03f, 0.07f)));
+		hasCollisionObjList.push_back(tempEnemyPlanePtr);
 
-	void gameLogicUpdate() {
+		enemyNumID++;
+	}
+
+	void gameLogicUpdate(float deltaTime) {
 		if (isRestart) {
 			isRestart = false;
 			playerPlanePtr->m_hp = 100;
@@ -194,6 +219,10 @@ public:
 			playerPlanePtr->m_ddoWithCollision->isDrawableObjDraw = true;
 			playerPlanePtr->isWillBeDeleted = false;
 
+			level = 0;
+			levelUpDeltaTime = 10.0f;
+			curLevelupDeltaTime = 11.0f;
+
 			for (HasCollisionObj* elem : hasCollisionObjList) {
 				if (elem != playerPlanePtr) {
 					elem->isWillBeDeleted = true;
@@ -201,7 +230,20 @@ public:
 			}
 		}
 		else {
+			curLevelupDeltaTime += deltaTime;
+			if (curLevelupDeltaTime > levelUpDeltaTime) {
+				level++;
+				curLevelupDeltaTime = 0.0f;
+				levelUpDeltaTime += 10 + (float)(level * 5);	//levelup time = 10sec + level * 5 sec
 
+				std::string levelOuputString = "Level ";
+				levelOuputString += std::to_string(level);
+				textManager->addPrintTextList(0, levelOuputString.c_str(), 200, 200, 40, 1.8f);
+
+				for (int i = 0; i < level; i++) {
+					makeEnemy();	//level unit
+				}
+			}
 		}
 	}
 
@@ -460,7 +502,7 @@ public:
 
 		updateCameraMVP();
 
-		gameLogicUpdate();
+		gameLogicUpdate(control->m_deltaTime);
 		updateGameObject();
 
 		drawShadowDepthToBuffer();

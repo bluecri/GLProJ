@@ -19,29 +19,30 @@ public:
 
 	float collisionParticleTime = 0.0f;
 
-
 	glm::vec3 boostPosition = glm::vec3(-0.05f, 0.0f, -0.1f);
+
+	float chaseTime = 0.0f;
+	float chaseTimeMax = 10.0f;
+	float chaseTimeMin = 5.0f;
+	float idleTimeMax = 10.0f;
+	float idleTimeMin = 5.0f;
+
+	float chaseSpeedMax = 3.5f, chaseSpeedMin = 3.2f, idleSpeedMax=0.5f, idleSpeedMin=2.0f;
+	bool isChasing = false;
+
+	float rotationSpeed = 1.0f;
+
+	float shotDistance = 30.0f;
+	glm::quat targetQuat;
 
 	EnemyPlane(Control * control, PlayerPlane * playerPlanePtr, int hp, CollisionProcessInfo* cpi, float speed, float maxSpeed, float acc, TextManager* textManagerPtr, DDOWithCollision * ddoWithCollision, PlaneDeltaParam planeDeltaParam)
 		: Plane(hp, cpi, speed, maxSpeed, acc, textManagerPtr, ddoWithCollision, planeDeltaParam), m_playerPlanePtr(playerPlanePtr), m_control(control) {
 		alLaserSource = new ALSource();
 		alHitSource = new ALSource(1.0f, 0.3f);
 		alExplosionSource = new ALSource();
+
+		rotationSpeed = glm::linearRand(0.2f, 1.0f);
 	}
-
-	float chaseTime = 0.0f;
-	float chaseTimeMax = 15.0f;
-	float chaseTimeMin = 10.0f;
-	float idleTimeMax = 1.0f;
-	float idleTimeMin = 0.0f;
-
-	float chaseSpeedMax = 3.5f, chaseSpeedMin = 3.2f, idleSpeedMax=0.5f, idleSpeedMin=2.0f;
-	bool isChasing = false;
-
-	float rotationSpeed = 2.0f;
-
-	float shotDistance = 30.0f;
-	glm::quat targetQuat;
 
 	void bindLaserSourceToALSound(ALSound *alSound) {
 		alLaserSource->bindSourceToALSound(alSound);
@@ -55,7 +56,7 @@ public:
 
 	virtual void collisionOccur(CollisionProcessInfo * anotherCpi) override {
 		//collision process with anotherCpi
-		printf("collision occur enemy\n");
+		//printf("collision occur enemy\n");
 		alHitSource->sourcePlay();
 		m_hp -= anotherCpi->m_dmg;
 		collisionParticleTime = 1.0f;
@@ -92,12 +93,7 @@ public:
 				upVec = glm::normalize(upVec);
 
 				targetQuat = glm::toQuat(glm::transpose(glm::lookAt(glm::vec3(0.0f), distVec, upVec)));
-				//targetQuat = glm::toQuat(glm::lookAt(glm::vec3(0.0f), glm::normalize(distVec), upVec));
-				//m_ddoWithCollision->m_rotateMatrix = glm::inverse(glm::lookAt(glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)));
 				
-				//targetQuat = glm::toQuat(glm::lookAt(glm::vec3(0.0f), glm::normalize(distVec), upVec));
-				//targetQuat = glm::toQuat(glm::lookAt(m_ddoWithCollision->modelVec, m_playerPlanePtr->m_ddoWithCollision->modelVec, upVec));
-
 				glm::quat curQuat = glm::toQuat(m_ddoWithCollision->m_rotateMatrix);
 
 				targetQuat = glm::slerp(curQuat, targetQuat, deltaTime* rotationSpeed);
@@ -178,6 +174,8 @@ public:
 			alLaserSource->sourcePlay();
 			observee->notifyBulletFire(m_ddoWithCollision->modelVec + glm::vec3(m_ddoWithCollision->getRotationMatrix() * glm::vec4(0.0f, 0.0f, 1.5f, 0.0f)), m_ddoWithCollision->getRotationMatrix());
 			lastShotTime = m_control->s_curTime;
+
+			shotDelayTime = glm::linearRand(0.6f, 2.0f);
 		}
 		Plane::shot();
 	}

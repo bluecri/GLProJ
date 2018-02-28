@@ -70,7 +70,7 @@ public:
 
 	virtual void collisionOccur(CollisionProcessInfo * anotherCpi) override{
 		//collision process with anotherCpi
-		printf("collision occur player\n");
+		//printf("collision occur player\n");
 		alHitSource->sourcePlay();
 		m_hp -= anotherCpi->m_dmg;
 	}
